@@ -9,11 +9,7 @@ struct CameraView: View {
     @StateObject private var model = DataModel()
     @Environment(\.openURL) var openURL
     
-    // @State private var currentOrientation = UIDevice.current.orientation
-    
     @State private var capturedPhoto = false
-    
-    @State private var side = false
     
     @State private var isPortrait = false
     
@@ -65,7 +61,6 @@ struct CameraView: View {
             }
         }
         .animation(.spring.speed(2), value: capturedPhoto)
-        .animation(.spring(duration: 1), value: side)
     }
     
     private func capturePhoto() {
@@ -96,15 +91,7 @@ struct CameraView: View {
                     Label {
                         Text("Gallery")
                     } icon: {
-                        //                        Button {
-                        //                            if let url = URL(string: "photos-navigation://") {
-                        //                                if UIApplication.shared.canOpenURL(url) {
-                        //                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        //                                }
-                        //                            }
-                        //                        } label: {
                         ThumbnailView(image: model.thumbnailImage)
-                        //    }
                     }
                 }
                 
@@ -128,11 +115,8 @@ struct CameraView: View {
                 }
                 
                 Button {
-                    
-                    side.toggle()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         model.camera.switchCaptureDevice()
-                        // side.toggle()
                     }
                 } label: {
                     Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
