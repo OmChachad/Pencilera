@@ -1,50 +1,33 @@
 /*
-See the License.txt file for this sample’s licensing information.
-*/
+ See the License.txt file for this sample’s licensing information.
+ */
 
 import SwiftUI
 
-    //@available(iOS 17.5, *)
+//@available(iOS 17.5, *)
 struct CameraView: View {
     @StateObject private var model = DataModel()
     @Environment(\.openURL) var openURL
     
-    @State private var currentOrientation = UIDevice.current.orientation
+    // @State private var currentOrientation = UIDevice.current.orientation
     
     @State private var capturedPhoto = false
     
     @State private var side = false
     
+    @State private var isPortrait = false
+    
     var body: some View {
         NavigationStack {
-            
-                let outerStack = currentOrientation.isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
+            GeometryReader { geo in
+                let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-//                    ZStack {
-////                        if side {
-//                            ViewfinderView(image:  $model.viewfinderImage )
-//                        
-//                            .cornerRadius(14)
-//                            .rotation3DEffect(.degrees(!side ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-//                            .opacity(!side ? 1 : 0)
-////                                //.transition(.reverseFlip)
-////                        } else {
-//                            ViewfinderView(image:  $model.viewfinderImage )
-////                        
-////                            .cornerRadius(14)
-////                            .rotation3DEffect(.degrees(side ? 180 : 0), axis: (x: 0, y: 1, z: 0))
-////                            .opacity(side ? 1 : 0)
-//                                //.transition(.flip)
-//                        //}
-//                    }
-//                        .rotation3DEffect(.degrees(side ? 180 : 0), axis: (x: 0, y: 1, z: 0))
-//                        .opacity(side ? 1 : 0)
                     ViewfinderView(image:  $model.viewfinderImage )
-                    .cornerRadius(14)
+                        .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
                     
-                        buttonsView()
+                    buttonsView()
                 }
                 .background {
                     Color(.secondarySystemBackground)
@@ -67,15 +50,13 @@ struct CameraView: View {
                 .onPencilSqueeze { _ in
                     capturePhoto()
                 }
-                .onAppear {
-                    print(UIDevice.current.model)
+                .onChange(of: geo.size.width <= geo.size.height) {
+                    isPortrait = geo.size.width <= geo.size.height
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                             self.currentOrientation = UIDevice.current.orientation
-                            }
-        }
-        .onAppear {
-            currentOrientation = UIDevice.current.orientation
+                .onAppear {
+                    isPortrait = geo.size.width <= geo.size.height
+                }
+            }
         }
         .overlay {
             if capturedPhoto {
@@ -99,7 +80,7 @@ struct CameraView: View {
     
     private func buttonsView() -> some View {
         Group {
-            let buttonsStack = currentOrientation.isLandscape ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+            let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
             buttonsStack {
                 Spacer()
                 
@@ -115,15 +96,15 @@ struct CameraView: View {
                     Label {
                         Text("Gallery")
                     } icon: {
-//                        Button {
-//                            if let url = URL(string: "photos-navigation://") {
-//                                if UIApplication.shared.canOpenURL(url) {
-//                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-//                                }
-//                            }
-//                        } label: {
-                            ThumbnailView(image: model.thumbnailImage)
-                    //    }
+                        //                        Button {
+                        //                            if let url = URL(string: "photos-navigation://") {
+                        //                                if UIApplication.shared.canOpenURL(url) {
+                        //                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        //                                }
+                        //                            }
+                        //                        } label: {
+                        ThumbnailView(image: model.thumbnailImage)
+                        //    }
                     }
                 }
                 
@@ -151,7 +132,7 @@ struct CameraView: View {
                     side.toggle()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         model.camera.switchCaptureDevice()
-                       // side.toggle()
+                        // side.toggle()
                     }
                 } label: {
                     Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
@@ -168,7 +149,7 @@ struct CameraView: View {
             .buttonStyle(.plain)
             .labelStyle(.iconOnly)
             .padding()
-            .padding(currentOrientation.isLandscape ? .trailing : .bottom)
+            .padding(!isPortrait ? .trailing : .bottom)
         }
     }
 }
