@@ -32,7 +32,8 @@ let package = Package(
             capabilities: [
                 .camera(purposeString: "Pencilera uses your camera to capture photos."),
                 .photoLibrary(purposeString: "Pencilera needs to be able to save photos to your photo library.")
-            ]
+            ],
+            appCategory: .photography
         )
     ],
     targets: [
