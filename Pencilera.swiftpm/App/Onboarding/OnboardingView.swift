@@ -10,29 +10,29 @@ import SwiftUI
 struct OnboardingView: View {
     @AppStorage("Modeldentifier") var modelIdentifier = ""
     
-    //    var isPencilProSupported: Bool {
-    //        let applePencilProiPadIdentifiers = ["iPad14,8",
-    //                                             "iPad14,9",
-    //                                             "iPad14,10",
-    //                                             "iPad14,11",
-    //                                             "iPad16,3",
-    //                                             "iPad16,4",
-    //                                             "iPad16,5",
-    //                                             "iPad16,6",
-    //                                             "iPad16,3-A",
-    //                                             "iPad16,3-B",
-    //                                             "iPad16,4-A",
-    //                                             "iPad16,4-B",
-    //                                             "iPad16,5-A",
-    //                                             "iPad16,5-B",
-    //                                             "iPad16,6-A",
-    //                                             "iPad16,6-B"]
-    //        return applePencilProiPadIdentifiers.contains(modelIdentifier)
-    //    }
+    var isPencilProSupported: Bool {
+        let applePencilProiPadIdentifiers = ["iPad14,8",
+                                             "iPad14,9",
+                                             "iPad14,10",
+                                             "iPad14,11",
+                                             "iPad16,3",
+                                             "iPad16,4",
+                                             "iPad16,5",
+                                             "iPad16,6",
+                                             "iPad16,3-A",
+                                             "iPad16,3-B",
+                                             "iPad16,4-A",
+                                             "iPad16,4-B",
+                                             "iPad16,5-A",
+                                             "iPad16,5-B",
+                                             "iPad16,6-A",
+                                             "iPad16,6-B"]
+        return applePencilProiPadIdentifiers.contains(modelIdentifier)
+    }
     
     @State private var pageIndex = 1
     let minimumIndex = 1
-    let maximumIndex = 3
+    var maximumIndex: Int { isPencilProSupported ? 3 : 2 }
     
     var body: some View {
         TabView(selection: $pageIndex) {
@@ -40,12 +40,14 @@ struct OnboardingView: View {
                 .clipped()
                 .tag(1)
             
-            Squeeze()
-                .clipped()
-                .tag(2)
+            if isPencilProSupported {
+                Squeeze()
+                    .clipped()
+                    .tag(2)
+            }
             
             StartUsingView()
-                .tag(3)
+                .tag(isPencilProSupported ? 3 : 2)
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
         .onAppear(perform: storeModelIdentifier)
