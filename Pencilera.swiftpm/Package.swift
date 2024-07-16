@@ -36,9 +36,17 @@ let package = Package(
             appCategory: .photography
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/aheze/VariableBlurView", "1.0.2"..<"2.0.0"),
+        .package(url: "https://github.com/Cindori/FluidGradient.git", "1.0.0"..<"2.0.0")
+    ],
     targets: [
         .executableTarget(
             name: "App",
+            dependencies: [
+                .product(name: "VariableBlurView", package: "VariableBlurView"),
+                .product(name: "FluidGradient", package: "FluidGradient")
+            ],
             path: "App"
         )
     ]

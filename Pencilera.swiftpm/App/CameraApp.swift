@@ -1,14 +1,28 @@
 /*
-See the License.txt file for this sample’s licensing information.
-*/
+ See the License.txt file for this sample’s licensing information.
+ */
 
 import SwiftUI
 
 @main
-struct CameraApp: App {
+struct Pencilera: App {
+    @AppStorage("firstTime") var isFirstTime: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            CameraView()
+            Group {
+                if isFirstTime {
+                    OnboardingBackground()
+                        .ignoresSafeArea(.all)
+                } else {
+                    CameraView()       
+                }
+            }
+            .sheet(isPresented: $isFirstTime, content: {
+                OnboardingView()
+                    .presentationBackground(Material.regular)
+            })
+            .animation(.default, value: isFirstTime)
         }
     }
 }
