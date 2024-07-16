@@ -1,7 +1,3 @@
-/*
-See the License.txt file for this sample’s licensing information.
-*/
-
 import AVFoundation
 import CoreImage
 import UIKit
@@ -31,16 +27,16 @@ class Camera: NSObject {
     
     private var captureDevices: [AVCaptureDevice] {
         var devices = [AVCaptureDevice]()
-        #if os(macOS) || (os(iOS) && targetEnvironment(macCatalyst))
+#if os(macOS) || (os(iOS) && targetEnvironment(macCatalyst))
         devices += allCaptureDevices
-        #else
-        if let frontDevice = frontCaptureDevices.first {
-            devices += [frontDevice]
-        }
+#else
         if let backDevice = backCaptureDevices.first {
             devices += [backDevice]
         }
-        #endif
+        if let frontDevice = frontCaptureDevices.first {
+            devices += [frontDevice]
+        }
+#endif
         return devices
     }
     
@@ -73,7 +69,7 @@ class Camera: NSObject {
         guard let captureDevice = captureDevice else { return false }
         return backCaptureDevices.contains(captureDevice)
     }
-
+    
     private var addToPhotoStream: ((AVCapturePhoto) -> Void)?
     
     private var addToPreviewStream: ((CIImage) -> Void)?
@@ -97,7 +93,7 @@ class Camera: NSObject {
             }
         }
     }()
-        
+    
     override init() {
         super.init()
         initialize()
@@ -106,7 +102,12 @@ class Camera: NSObject {
     private func initialize() {
         sessionQueue = DispatchQueue(label: "session queue")
         
-        captureDevice = availableCaptureDevices.first ?? AVCaptureDevice.default(for: .video)
+        // Prioritize front camera, but handle cases where it might not be available
+        if let frontDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) {
+            captureDevice = frontDevice
+        } else {
+            captureDevice = AVCaptureDevice.default(for: .video)
+        }
         
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(updateForDeviceOrientation), name: UIDevice.orientationDidChangeNotification, object: nil)
@@ -131,13 +132,17 @@ class Camera: NSObject {
             return
         }
         
+        // Remove existing inputs and outputs
+        captureSession.inputs.forEach { captureSession.removeInput($0) }
+        captureSession.outputs.forEach { captureSession.removeOutput($0) }
+        
         let photoOutput = AVCapturePhotoOutput()
-                        
+        
         captureSession.sessionPreset = AVCaptureSession.Preset.photo
-
+        
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "VideoDataOutputQueue"))
-  
+        
         guard captureSession.canAddInput(deviceInput) else {
             logger.error("Unable to add device input to capture session.")
             return
@@ -206,7 +211,7 @@ class Camera: NSObject {
         
         captureSession.beginConfiguration()
         defer { captureSession.commitConfiguration() }
-
+        
         for input in captureSession.inputs {
             if let deviceInput = input as? AVCaptureDeviceInput {
                 captureSession.removeInput(deviceInput)
@@ -271,8 +276,19 @@ class Camera: NSObject {
         } else {
             self.captureDevice = AVCaptureDevice.default(for: .video)
         }
+        
+        // Reconfigure the capture session after switching devices
+        sessionQueue.async {
+            self.configureCaptureSession { success in
+                if success {
+                    logger.debug("Successfully reconfigured capture session after switching devices.")
+                } else {
+                    logger.error("Failed to reconfigure capture session after switching devices.")
+                }
+            }
+        }
     }
-
+    
     private var deviceOrientation: UIDeviceOrientation {
         var orientation = UIDevice.current.orientation
         if orientation == UIDeviceOrientation.unknown {
@@ -300,9 +316,9 @@ class Camera: NSObject {
         guard let photoOutput = self.photoOutput else { return }
         
         sessionQueue.async {
-        
+            
             var photoSettings = AVCapturePhotoSettings()
-
+            
             if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
                 photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
             }
@@ -317,7 +333,7 @@ class Camera: NSObject {
             
             if let photoOutputVideoConnection = photoOutput.connection(with: .video) {
                 if photoOutputVideoConnection.isVideoOrientationSupported,
-                    let videoOrientation = self.videoOrientationFor(self.deviceOrientation) {
+                   let videoOrientation = self.videoOrientationFor(self.deviceOrientation) {
                     photoOutputVideoConnection.videoOrientation = videoOrientation
                 }
             }
@@ -349,13 +365,13 @@ extension Camera: AVCaptureVideoDataOutputSampleBufferDelegate {
            let videoOrientation = videoOrientationFor(deviceOrientation) {
             connection.videoOrientation = videoOrientation
         }
-
+        
         addToPreviewStream?(CIImage(cvPixelBuffer: pixelBuffer))
     }
 }
 
 fileprivate extension UIScreen {
-
+    
     var orientation: UIDeviceOrientation {
         let point = coordinateSpace.convert(CGPoint.zero, to: fixedCoordinateSpace)
         if point == CGPoint.zero {
@@ -373,4 +389,3 @@ fileprivate extension UIScreen {
 }
 
 fileprivate let logger = Logger(subsystem: "com.apple.swiftplaygroundscontent.capturingphotos", category: "Camera")
-
