@@ -38,7 +38,7 @@ struct StartUsingView: View {
                     HStack {
                         Image(systemName: item.icon)
                             .font(.system(size: 44))
-                            .foregroundColor(item.color)
+                            .foregroundStyle(item.color.gradient)
                             .frame(width: 70)
                         
                         VStack(alignment: .leading, content: {
