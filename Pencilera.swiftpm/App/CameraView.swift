@@ -4,7 +4,6 @@
 
 import SwiftUI
 
-//@available(iOS 17.5, *)
 struct CameraView: View {
     @StateObject private var model = DataModel()
     @Environment(\.openURL) var openURL
@@ -94,8 +93,6 @@ struct CameraView: View {
                         ThumbnailView(image: model.thumbnailImage)
                     }
                 }
-                
-                
                 
                 Button {
                     capturePhoto()
