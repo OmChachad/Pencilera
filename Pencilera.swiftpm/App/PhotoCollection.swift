@@ -5,6 +5,7 @@ See the License.txt file for this sample’s licensing information.
 import Photos
 import os.log
 
+let appIdentifier = "org.starlightapps.pencilera"
 class PhotoCollection: NSObject, ObservableObject {
     
     @Published var photoAssets: PhotoAssetCollection = PhotoAssetCollection(PHFetchResult<PHAsset>())
@@ -240,4 +241,4 @@ extension PhotoCollection: PHPhotoLibraryChangeObserver {
     }
 }
 
-fileprivate let logger = Logger(subsystem: "com.apple.swiftplaygroundscontent.capturingphotos", category: "PhotoCollection")
+fileprivate let logger = Logger(subsystem: appIdentifier, category: "PhotoCollection")
