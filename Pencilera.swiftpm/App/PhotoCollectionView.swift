@@ -30,7 +30,6 @@ struct PhotoCollectionView: View {
                         PhotoView(asset: asset, cache: photoCollection.cache)
                     } label: {
                         photoItemView(asset: asset)
-                            .drawingGroup()
                     }
                     .buttonStyle(.borderless)
                     .accessibilityLabel(asset.accessibilityLabel)
