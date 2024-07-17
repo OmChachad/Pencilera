@@ -11,7 +11,7 @@ struct OnboardingView: View {
     @AppStorage("Modeldentifier") var modelIdentifier = ""
     
     var isPencilProSupported: Bool {
-        let applePencilProiPadIdentifiers = ["iPad14,8",
+        let applePencilProiPadIdentifiers: [String] = ["iPad14,8",
                                              "iPad14,9",
                                              "iPad14,10",
                                              "iPad14,11",
