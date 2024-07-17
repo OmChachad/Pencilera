@@ -16,6 +16,32 @@ struct CameraView: View {
     @State private var cancellables = Set<AnyCancellable>()
     
     @State private var showTipJar = false
+    @State private var showSettings = false
+    
+    @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
+    @AppStorage("squeezeEnabled") private var isSqueezeEnabled = true
+    
+    @AppStorage("Modeldentifier") var modelIdentifier = ""
+    
+    var isPencilProSupported: Bool {
+        let applePencilProiPadIdentifiers: [String] = ["iPad14,8",
+                                                       "iPad14,9",
+                                                       "iPad14,10",
+                                                       "iPad14,11",
+                                                       "iPad16,3",
+                                                       "iPad16,4",
+                                                       "iPad16,5",
+                                                       "iPad16,6",
+                                                       "iPad16,3-A",
+                                                       "iPad16,3-B",
+                                                       "iPad16,4-A",
+                                                       "iPad16,4-B",
+                                                       "iPad16,5-A",
+                                                       "iPad16,5-B",
+                                                       "iPad16,6-A",
+                                                       "iPad16,6-B"]
+        return applePencilProiPadIdentifiers.contains(modelIdentifier)
+    }
     
     var body: some View {
         NavigationStack {
@@ -45,10 +71,14 @@ struct CameraView: View {
                 .ignoresSafeArea()
                 .statusBar(hidden: true)
                 .onPencilDoubleTap { _ in
-                    capturePhotoSubject.send()
+                    if isDoubleTapEnabled {
+                        capturePhotoSubject.send()
+                    }
                 }
                 .onPencilSqueeze { _ in
-                    capturePhotoSubject.send()
+                    if isSqueezeEnabled {
+                        capturePhotoSubject.send()
+                    }
                 }
                 .onChange(of: geo.size.width <= geo.size.height) {
                     isPortrait = geo.size.width <= geo.size.height
@@ -88,11 +118,35 @@ struct CameraView: View {
     }
     
     private func buttonsView() -> some View {
-        Group {
-            let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        
+        return ZStack {
+            buttonsStack {
+                
+                if isPencilProSupported {
+                    Button("Settings", systemImage: "gear") {
+                        showSettings.toggle()
+                    }
+                    .popover(isPresented: $showSettings) {
+                        Settings()
+                            .frame(width: 400, height: 160)
+                    }
+                    .hoverEffect(.lift)
+                }
+                
+                Spacer()
+                
+                Button("Tip Jar", systemImage: "heart.fill") {
+                    showTipJar.toggle()
+                }
+                .foregroundColor(.pink)
+                .hoverEffect(.lift)
+
+            }
+            .font(.system(size: 20, weight: .regular))
+            
             buttonsStack {
                 Group {
-                    
                     Spacer()
                     
                     NavigationLink {
@@ -142,24 +196,17 @@ struct CameraView: View {
                     .clipShape(.circle)
                     
                     Spacer()
-                    
-                    Button("Tip Jar", systemImage: "heart.fill") {
-                        showTipJar.toggle()
-                    }
-                    .font(.system(size: 20, weight: .regular))
-                    .foregroundColor(.pink)
-
                 }
                 .hoverEffect(.lift)
             }
             .sheet(isPresented: $showTipJar) {
                 TipJar()
             }
-            .buttonStyle(.plain)
-            .labelStyle(.iconOnly)
-            .padding()
-            .padding(!isPortrait ? .trailing : .bottom)
-            .padding(!isPortrait ? .vertical : .horizontal)
         }
+        .buttonStyle(.plain)
+        .labelStyle(.iconOnly)
+        .padding()
+        .padding(!isPortrait ? .trailing : .bottom)
+        .padding(!isPortrait ? .vertical : .horizontal)
     }
 }
