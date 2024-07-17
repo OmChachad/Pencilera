@@ -1,5 +1,4 @@
 import SwiftUI
-//import Glur
 import VariableBlurView
 
 struct DoubleTap: View {
