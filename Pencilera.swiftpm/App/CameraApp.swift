@@ -14,12 +14,12 @@ struct Pencilera: App {
             Group {
                 if isFirstTime {
                     OnboardingBackground()
-                        .ignoresSafeArea(.all)
                 } else {
                     CameraView()
                         .environmentObject(storeKit)
                 }
             }
+            .ignoresSafeArea(.all)
             .sheet(isPresented: $isFirstTime, content: {
                 OnboardingView()
                     .presentationBackground(Material.regular)
