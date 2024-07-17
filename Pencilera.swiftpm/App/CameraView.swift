@@ -3,14 +3,17 @@
  */
 
 import SwiftUI
+import Combine
 
 struct CameraView: View {
     @StateObject private var model = DataModel()
     @Environment(\.openURL) var openURL
     
     @State private var capturedPhoto = false
-    
     @State private var isPortrait = false
+    
+    @State private var capturePhotoSubject = PassthroughSubject<Void, Never>()
+    @State private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
         NavigationStack {
@@ -40,16 +43,17 @@ struct CameraView: View {
                 .ignoresSafeArea()
                 .statusBar(hidden: true)
                 .onPencilDoubleTap { _ in
-                    capturePhoto()
+                    capturePhotoSubject.send()
                 }
                 .onPencilSqueeze { _ in
-                    capturePhoto()
+                    capturePhotoSubject.send()
                 }
                 .onChange(of: geo.size.width <= geo.size.height) {
                     isPortrait = geo.size.width <= geo.size.height
                 }
                 .onAppear {
                     isPortrait = geo.size.width <= geo.size.height
+                    setupDebouncedCapture()
                 }
             }
         }
@@ -62,7 +66,16 @@ struct CameraView: View {
         .animation(.spring.speed(2), value: capturedPhoto)
     }
     
-    private func capturePhoto() {
+    private func setupDebouncedCapture() {
+        capturePhotoSubject
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .sink {
+                self.performCapture()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func performCapture() {
         model.camera.takePhoto()
         
         capturedPhoto = true
@@ -95,7 +108,7 @@ struct CameraView: View {
                 }
                 
                 Button {
-                    capturePhoto()
+                    capturePhotoSubject.send()
                 } label: {
                     Label {
                         Text("Take Photo")
