@@ -15,6 +15,8 @@ struct CameraView: View {
     @State private var capturePhotoSubject = PassthroughSubject<Void, Never>()
     @State private var cancellables = Set<AnyCancellable>()
     
+    @State private var showTipJar = false
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -89,61 +91,75 @@ struct CameraView: View {
         Group {
             let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
             buttonsStack {
-                Spacer()
-                
-                NavigationLink {
-                    PhotoCollectionView(photoCollection: model.photoCollection)
-                        .onAppear {
-                            model.camera.isPreviewPaused = true
-                        }
-                        .onDisappear {
-                            model.camera.isPreviewPaused = false
-                        }
-                } label: {
-                    Label {
-                        Text("Gallery")
-                    } icon: {
-                        ThumbnailView(image: model.thumbnailImage)
-                    }
-                }
-                
-                Button {
-                    capturePhotoSubject.send()
-                } label: {
-                    Label {
-                        Text("Take Photo")
-                    } icon: {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(.white, lineWidth: 3)
-                                .frame(width: 62, height: 62)
-                            Circle()
-                                .fill(.white)
-                                .frame(width: 50, height: 50)
+                Group {
+                    
+                    Spacer()
+                    
+                    NavigationLink {
+                        PhotoCollectionView(photoCollection: model.photoCollection)
+                            .onAppear {
+                                model.camera.isPreviewPaused = true
+                            }
+                            .onDisappear {
+                                model.camera.isPreviewPaused = false
+                            }
+                    } label: {
+                        Label {
+                            Text("Gallery")
+                        } icon: {
+                            ThumbnailView(image: model.thumbnailImage)
                         }
                     }
-                }
-                
-                Button {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        model.camera.switchCaptureDevice()
+                    
+                    Button {
+                        capturePhotoSubject.send()
+                    } label: {
+                        Label {
+                            Text("Take Photo")
+                        } icon: {
+                            ZStack {
+                                Circle()
+                                    .strokeBorder(.white, lineWidth: 3)
+                                    .frame(width: 62, height: 62)
+                                Circle()
+                                    .fill(.white)
+                                    .frame(width: 50, height: 50)
+                            }
+                        }
                     }
-                } label: {
-                    Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-                        .font(.system(size: 30, weight: .regular))
-                        .foregroundColor(.white)
+                    
+                    Button {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            model.camera.switchCaptureDevice()
+                        }
+                    } label: {
+                        Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 30, weight: .regular))
+                            .foregroundColor(.white)
+                    }
+                    .padding(5)
+                    .background(.ultraThinMaterial)
+                    .clipShape(.circle)
+                    
+                    Spacer()
+                    
+                    Button("Tip Jar", systemImage: "heart.fill") {
+                        showTipJar.toggle()
+                    }
+                    .font(.system(size: 20, weight: .regular))
+                    .foregroundColor(.pink)
+
                 }
-                .padding(5)
-                .background(.ultraThinMaterial)
-                .clipShape(.circle)
-                
-                Spacer()
-                
+                .hoverEffect(.lift)
+            }
+            .sheet(isPresented: $showTipJar) {
+                TipJar()
             }
             .buttonStyle(.plain)
             .labelStyle(.iconOnly)
             .padding()
             .padding(!isPortrait ? .trailing : .bottom)
+            .padding(!isPortrait ? .vertical : .horizontal)
         }
     }
 }

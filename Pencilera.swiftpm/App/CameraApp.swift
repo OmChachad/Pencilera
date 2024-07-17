@@ -6,6 +6,7 @@ import SwiftUI
 
 @main
 struct Pencilera: App {
+    @ObservedObject var storeKit = Store.shared
     @AppStorage("firstTime") var isFirstTime: Bool = true
     
     var body: some Scene {
@@ -15,7 +16,8 @@ struct Pencilera: App {
                     OnboardingBackground()
                         .ignoresSafeArea(.all)
                 } else {
-                    CameraView()       
+                    CameraView()
+                        .environmentObject(storeKit)
                 }
             }
             .sheet(isPresented: $isFirstTime, content: {
