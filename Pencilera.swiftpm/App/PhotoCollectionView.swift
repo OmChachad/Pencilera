@@ -40,6 +40,31 @@ struct PhotoCollectionView: View {
         .navigationTitle(photoCollection.albumName ?? "Gallery")
         .navigationBarTitleDisplayMode(.inline)
         .statusBar(hidden: false)
+        .toolbar {
+            Button {
+                openPhotosApp()
+            } label: {
+                HStack {
+                    Image("Photos")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 20)
+                    
+                    Text("Open in Photos")
+                        .foregroundColor(.black)
+                        .bold()
+                }
+                .padding(7.5)
+                .background(Gradient(colors: [.white, .white.opacity(0.7)]))
+                .cornerRadius(10)
+            }
+        }
+    }
+    
+    func openPhotosApp() {
+        if let url = URL(string: "photos-redirect://") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
     
     private func photoItemView(asset: PhotoAsset) -> some View {
