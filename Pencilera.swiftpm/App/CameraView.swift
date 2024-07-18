@@ -16,6 +16,7 @@ struct CameraView: View {
     @State private var cancellables = Set<AnyCancellable>()
     
     @State private var showTipJar = false
+    @State private var showInfo = false
     @State private var showSettings = false
     
     @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
@@ -136,11 +137,18 @@ struct CameraView: View {
                 
                 Spacer()
                 
-                Button("Tip Jar", systemImage: "heart.fill") {
-                    showTipJar.toggle()
+                HStack {
+                    Button("Tip Jar", systemImage: "heart.fill") {
+                        showTipJar.toggle()
+                    }
+                    .foregroundColor(.pink)
+                    .hoverEffect(.lift)
+                    
+                    Button("Info", systemImage: "info.circle") {
+                        showInfo.toggle()
+                    }
+                    .hoverEffect(.lift)
                 }
-                .foregroundColor(.pink)
-                .hoverEffect(.lift)
 
             }
             .font(.system(size: 20, weight: .regular))
@@ -201,6 +209,9 @@ struct CameraView: View {
             }
             .sheet(isPresented: $showTipJar) {
                 TipJar()
+            }
+            .sheet(isPresented: $showInfo) {
+                InfoView()
             }
         }
         .buttonStyle(.plain)
