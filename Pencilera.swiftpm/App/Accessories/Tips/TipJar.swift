@@ -10,32 +10,6 @@ struct TipJar: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("About the Developer") {
-                    HStack {
-                        Image("Om")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-//                            .padding(.trailing)
-                        
-                        VStack(alignment: .leading) {
-                            Text("Hi, I'm Om Chachad! 👋🏻")
-                                .font(.title3.bold())
-                            Text("I'm the developer behind Pencilera, thanks for checking out my app.\nI hope you are enjoying using it!")
-                               // .frame(maxWidth: .infinity)
-                                .foregroundColor(.secondary)
-                            HStack {
-                                socialLink(url: "https://www.youtube.com/TheiTE")
-                                socialLink(url: "https://itecheverything.com")
-                                socialLink(url: "https://twitter.com/TheOriginaliTE")
-                            }
-                        }
-                        .multilineTextAlignment(.leading)
-                    }
-                }
-                
                 Section {
                     
                     VStack(alignment: .leading) {
@@ -111,40 +85,6 @@ struct TipJar: View {
                 .frame(width: 10, alignment: .center)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    private func socialLink(url: String) -> some View {
-        let url: URL = URL(string: url) ?? URL(string: "https://starlightapps.org")!
-        
-        return VStack {
-            symbol(for: url)
-                .padding(5)
-                .padding(.horizontal, 10)
-                .background(.secondary.opacity(0.15))
-                .cornerRadius(20)
-        }.onTapGesture {
-            openURL(url)
-        }
-        .hoverEffect(.lift)
-    }
-    
-    private func symbol(for url: URL) -> some View {
-        Group {
-            switch url.host {
-            case "www.youtube.com":
-                YouTube()
-                    .foregroundColor(.red)
-            case "twitter.com":
-                Twitter()
-                    .foregroundColor(Color(red: 0.0, green: 0.6745, blue: 0.9333))
-            default:
-                Image(systemName: "globe")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.blue)
-            }
-        }
-        .frame(width: 22.5, height: 22.5)
     }
 }
 
