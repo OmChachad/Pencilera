@@ -19,7 +19,7 @@ let package = Package(
             bundleIdentifier: "org.starlightapps.pencilera",
             teamIdentifier: "3S6NT5MUQZ",
             displayVersion: "1.0",
-            bundleVersion: "1",
+            bundleVersion: "4",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
@@ -46,7 +46,10 @@ let package = Package(
                 .product(name: "VariableBlurView", package: "VariableBlurView"),
                 .product(name: "FluidGradient", package: "FluidGradient")
             ],
-            path: "App"
+            path: "App",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )
