@@ -113,7 +113,7 @@ struct CameraView: View {
         
         capturedPhoto = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             capturedPhoto = false
         }
     }
