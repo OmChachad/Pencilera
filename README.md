@@ -89,7 +89,7 @@ Pencilera leverages several open-source packages to enhance its functionality:
 
 Pencilera is developed and maintained by [Starlight Apps LLP](https://starlightapps.org).
 
-Pencilera was build on top of Apple's [Capturing and Saving a Photo Sample Swift Playground.](https://developer.apple.com/tutorials/sample-apps/capturingphotos-captureandsave)
+Pencilera was built on top of Apple's [Capturing and Saving a Photo Sample Swift Playground.](https://developer.apple.com/tutorials/sample-apps/capturingphotos-captureandsave)
 
 Thanks to Arnav Hattiholi for design direction during the process of designing the app icon. The camera lens in the icon is built on top of [this Figma Project](https://www.figma.com/community/file/1317819493946895912/iphone-15-recreation) from [Jia.](https://x.com/upintheozone)
 
