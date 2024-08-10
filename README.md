@@ -90,8 +90,10 @@ Pencilera leverages several open-source packages to enhance its functionality:
 Pencilera is developed and maintained by [Starlight Apps LLP](https://starlightapps.org).
 
 Pencilera was build on top of Apple's [Capturing and Saving a Photo Sample Swift Playground.](https://developer.apple.com/tutorials/sample-apps/capturingphotos-captureandsave)
+
 Thanks to Arnav Hattiholi for design direction during the process of designing the app icon.
-Thanks to Arsh Jiwani and Joshua Bosco Thattil Valashray for helping me film [the advertisement](https://youtu.be/KeqcXczX-es), 
+
+Thanks to Arsh Jiwani and Joshua Bosco Thattil Valashray for helping me film [the advertisement](https://youtu.be/KeqcXczX-es).
 
 ## Contact
 
