@@ -86,5 +86,4 @@ actor CachedImageManager {
 }
 
 
-fileprivate let logger = Logger(subsystem: "org.starlightapps.pencilera", category: "CachedImageManager")
-
+fileprivate let logger = Logger(subsystem: appIdentifier, category: "CachedImageManager")
