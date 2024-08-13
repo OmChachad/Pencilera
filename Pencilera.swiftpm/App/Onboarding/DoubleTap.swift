@@ -10,7 +10,7 @@ struct DoubleTap: View {
             
             Text("Double Tap, Single Take.")
                 .font(.largeTitle.bold())
-                .foregroundStyle(LinearGradient(colors: [.white, .white.opacity(0.5)], startPoint: .top, endPoint: .bottom))
+                .foregroundStyle(LinearGradient(colors: [.primary, .primary.opacity(0.5)], startPoint: .top, endPoint: .bottom))
                 .fontWidth(.expanded)
             Text("Double tap the stem of your Apple Pencil to capture a photo.")
             

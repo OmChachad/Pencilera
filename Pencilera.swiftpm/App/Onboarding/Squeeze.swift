@@ -19,7 +19,7 @@ struct Squeeze: View {
                 Text("Say ") + Text("~~Cheese~~ ").fontWeight(.thin)                 + Text("Squeeze!").italic()//.fontWidth(.condensed)
             }
             .font(.largeTitle.bold())
-            .foregroundStyle(LinearGradient(colors: [.white, .white.opacity(0.5)], startPoint: .top, endPoint: .bottom))
+            .foregroundStyle(LinearGradient(colors: [.primary, .primary.opacity(0.5)], startPoint: .top, endPoint: .bottom))
             
             Text("Apple Pencil Pro allows you to take photos by squeezing your pencil.")
                 .multilineTextAlignment(.center)

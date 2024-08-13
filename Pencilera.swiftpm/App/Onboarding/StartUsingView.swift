@@ -28,7 +28,7 @@ struct StartUsingView: View {
             
             Text("Welcome to Pencilera")
                 .font(.largeTitle.bold())
-                .foregroundStyle(LinearGradient(colors: [.white, .white.opacity(0.5)], startPoint: .top, endPoint: .bottom))
+                .foregroundStyle(LinearGradient(colors: [.primary, .primary.opacity(0.5)], startPoint: .top, endPoint: .bottom))
                 .fontWidth(.expanded)
             
             Spacer()
