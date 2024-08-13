@@ -3,6 +3,17 @@ import SwiftUI
 struct InfoView: View {
     @Environment(\.openURL) var openURL
     
+    struct MyApp: Hashable {
+        var name: String
+        var iconName: String
+        var link: URL
+    }
+    
+    var myApps: [MyApp] = [
+        MyApp(name: "Linkeeper", iconName: "Linkeeper", link: URL(string: "https://apps.apple.com/app/id6449708232")!),
+        MyApp(name: "snApp", iconName: "snApp", link: URL(string: "https://apps.apple.com/app/id6449620109")!)
+    ]
+    
     var body: some View {
         Form {
             Section("About the Developer") {
@@ -47,6 +58,34 @@ struct InfoView: View {
                     
                     Link("Privacy Policy", destination: URL(string: "http://starlightapps.org/privacy-policy")!)
                 }
+            }
+            
+            Section("Check out my other apps!") {
+                HStack {
+                    Spacer()
+                    
+                    ForEach(myApps, id: \.self) { app in
+                        HStack {
+                            Image(app.iconName)
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                                .clipShape(.rect(cornerRadius: 12, style: .continuous))
+                                .shadow(radius: 5)
+                                .padding(.trailing)
+                            
+                            Text(app.name)
+                                .bold()
+                                .foregroundStyle(.primary)
+                        }
+                        .contentShape(.rect)
+                        .onTapGesture {
+                            openURL(app.link)
+                        }
+                        
+                        Spacer()
+                    }
+                }
+                .padding()
             }
         }
     }
