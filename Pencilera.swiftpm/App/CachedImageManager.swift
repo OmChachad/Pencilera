@@ -42,7 +42,7 @@ actor CachedImageManager {
         }
         imageManager.startCachingImages(for: phAssets, targetSize: targetSize, contentMode: imageContentMode, options: requestOptions)
     }
-
+    
     func stopCaching(for assets: [PhotoAsset], targetSize: CGSize) {
         let phAssets = assets.compactMap { $0.phAsset }
         phAssets.forEach {
@@ -85,5 +85,6 @@ actor CachedImageManager {
     }
 }
 
-fileprivate let logger = Logger(subsystem: "com.apple.swiftplaygroundscontent.capturingphotos", category: "CachedImageManager")
+
+fileprivate let logger = Logger(subsystem: "org.starlightapps.pencilera", category: "CachedImageManager")
 
