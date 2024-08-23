@@ -46,7 +46,7 @@ struct PhotoAsset: Identifiable {
                     request.isFavorite = isFavorite
                 }
             } catch (let error) {
-                logger.error("Failed to change isFavorite: \(error.localizedDescription)")
+                LogManager.shared.addLog("Failed to change isFavorite: \(error.localizedDescription)", type: .error)
             }
         }
     }
@@ -57,9 +57,9 @@ struct PhotoAsset: Identifiable {
             try await PHPhotoLibrary.shared().performChanges {
                 PHAssetChangeRequest.deleteAssets([phAsset] as NSArray)
             }
-            logger.debug("PhotoAsset asset deleted: \(index ?? -1)")
+            LogManager.shared.addLog("PhotoAsset asset deleted: \(index ?? -1)")
         } catch (let error) {
-            logger.error("Failed to delete photo: \(error.localizedDescription)")
+            LogManager.shared.addLog("Failed to delete photo: \(error.localizedDescription)", type: .error)
         }
     }
 }

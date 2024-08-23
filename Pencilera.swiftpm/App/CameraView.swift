@@ -124,16 +124,16 @@ struct CameraView: View {
         return ZStack {
             buttonsStack {
                 
-                if isPencilProSupported {
+               // if isPencilProSupported {
                     Button("Settings", systemImage: "gear") {
                         showSettings.toggle()
                     }
                     .popover(isPresented: $showSettings) {
                         Settings()
-                            .frame(width: 400, height: 160)
+                            .frame(width: 400, height: 300)
                     }
                     .hoverEffect(.lift)
-                }
+            //    }
                 
                 Spacer()
                 

@@ -49,7 +49,7 @@ class Camera: NSObject {
     private var captureDevice: AVCaptureDevice? {
         didSet {
             guard let captureDevice = captureDevice else { return }
-            logger.debug("Using capture device: \(captureDevice.localizedName)")
+            LogManager.shared.addLog("Using capture device: \(captureDevice.localizedName)")
             sessionQueue.async {
                 self.updateSessionForCaptureDevice(captureDevice)
             }
@@ -128,7 +128,7 @@ class Camera: NSObject {
             let captureDevice = captureDevice,
             let deviceInput = try? AVCaptureDeviceInput(device: captureDevice)
         else {
-            logger.error("Failed to obtain video input.")
+            LogManager.shared.addLog("Failed to obtain video input.")
             return
         }
         
@@ -144,15 +144,15 @@ class Camera: NSObject {
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "VideoDataOutputQueue"))
         
         guard captureSession.canAddInput(deviceInput) else {
-            logger.error("Unable to add device input to capture session.")
+            LogManager.shared.addLog("Unable to add device input to capture session.")
             return
         }
         guard captureSession.canAddOutput(photoOutput) else {
-            logger.error("Unable to add photo output to capture session.")
+            LogManager.shared.addLog("Unable to add photo output to capture session.")
             return
         }
         guard captureSession.canAddOutput(videoOutput) else {
-            logger.error("Unable to add video output to capture session.")
+            LogManager.shared.addLog("Unable to add video output to capture session.")
             return
         }
         
@@ -177,19 +177,19 @@ class Camera: NSObject {
     private func checkAuthorization() async -> Bool {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            logger.debug("Camera access authorized.")
+            LogManager.shared.addLog("Camera access authorized.")
             return true
         case .notDetermined:
-            logger.debug("Camera access not determined.")
+            LogManager.shared.addLog("Camera access not determined.")
             sessionQueue.suspend()
             let status = await AVCaptureDevice.requestAccess(for: .video)
             sessionQueue.resume()
             return status
         case .denied:
-            logger.debug("Camera access denied.")
+            LogManager.shared.addLog("Camera access denied.")
             return false
         case .restricted:
-            logger.debug("Camera library access restricted.")
+            LogManager.shared.addLog("Camera library access restricted.")
             return false
         @unknown default:
             return false
@@ -201,7 +201,7 @@ class Camera: NSObject {
         do {
             return try AVCaptureDeviceInput(device: validDevice)
         } catch let error {
-            logger.error("Error getting capture device input: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error getting capture device input: \(error.localizedDescription)", type: .error)
             return nil
         }
     }
@@ -238,7 +238,7 @@ class Camera: NSObject {
     func start() async {
         let authorized = await checkAuthorization()
         guard authorized else {
-            logger.error("Camera access was not authorized.")
+            LogManager.shared.addLog("Camera access was not authorized.")
             return
         }
         
@@ -281,9 +281,9 @@ class Camera: NSObject {
         sessionQueue.async {
             self.configureCaptureSession { success in
                 if success {
-                    logger.debug("Successfully reconfigured capture session after switching devices.")
+                    LogManager.shared.addLog("Successfully reconfigured capture session after switching devices.")
                 } else {
-                    logger.error("Failed to reconfigure capture session after switching devices.")
+                    LogManager.shared.addLog("Failed to reconfigure capture session after switching devices.")
                 }
             }
         }
@@ -313,7 +313,9 @@ class Camera: NSObject {
     }
     
     func takePhoto() {
-        guard let photoOutput = self.photoOutput else { return }
+        guard let photoOutput = self.photoOutput else { 
+            LogManager.shared.addLog("Could not get photoOutput", type: .error)
+            return }
         
         sessionQueue.async {
             
@@ -337,7 +339,7 @@ class Camera: NSObject {
                     photoOutputVideoConnection.videoOrientation = videoOrientation
                 }
             }
-            
+            LogManager.shared.addLog("Captured a photo")
             photoOutput.capturePhoto(with: photoSettings, delegate: self)
         }
     }
@@ -348,7 +350,7 @@ extension Camera: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
         if let error = error {
-            logger.error("Error capturing photo: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error capturing photo: \(error.localizedDescription)", type: .error)
             return
         }
         

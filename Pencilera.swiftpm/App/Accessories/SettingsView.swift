@@ -4,6 +4,8 @@ struct Settings: View {
     @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
     @AppStorage("squeezeEnabled") private var isSqueezeEnabled = true
     
+    @State private var showLogsView = false
+    
     private var atLeastOneEnabled: Bool {
         isDoubleTapEnabled || isSqueezeEnabled
     }
@@ -29,6 +31,15 @@ struct Settings: View {
                         isSqueezeEnabled = newValue
                     }
                 ))
+            }
+            
+            Section("Advanced") {
+                Button("View Logs") {
+                    showLogsView = true
+                }
+                .sheet(isPresented: $showLogsView) {
+                    LogsView()
+                }
             }
         }
     }

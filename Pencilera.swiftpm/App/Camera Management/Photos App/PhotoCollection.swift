@@ -43,10 +43,10 @@ class PhotoCollection: NSObject, ObservableObject {
 
     init?(albumWithIdentifier identifier: String) {
         guard let assetCollection = PhotoCollection.getAlbum(identifier: identifier) else {
-            logger.error("Photo album not found for identifier: \(identifier)")
+            LogManager.shared.addLog("Photo album not found for identifier: \(identifier)")
             return nil
         }
-        logger.log("Loaded photo album with identifier: \(identifier)")
+        LogManager.shared.addLog("Loaded photo album with identifier: \(identifier)")
         self.assetCollection = assetCollection
         super.init()
         Task {
@@ -69,34 +69,34 @@ class PhotoCollection: NSObject, ObservableObject {
         
         if let smartAlbumType = smartAlbumType {
             if let assetCollection = PhotoCollection.getSmartAlbum(subtype: smartAlbumType) {
-                logger.log("Loaded smart album of type: \(smartAlbumType.rawValue)")
+                LogManager.shared.addLog("Loaded smart album of type: \(smartAlbumType.rawValue)")
                 self.assetCollection = assetCollection
                 await refreshPhotoAssets()
                 return
             } else {
-                logger.error("Unable to load smart album of type: : \(smartAlbumType.rawValue)")
+                LogManager.shared.addLog("Unable to load smart album of type: : \(smartAlbumType.rawValue)")
                 throw PhotoCollectionError.unableToLoadSmartAlbum(smartAlbumType)
             }
         }
         
         guard let name = albumName, !name.isEmpty else {
-            logger.error("Unable to load an album without a name.")
+            LogManager.shared.addLog("Unable to load an album without a name.")
             throw PhotoCollectionError.missingAlbumName
         }
         
         if let assetCollection = PhotoCollection.getAlbum(named: name) {
-            logger.log("Loaded photo album named: \(name)")
+            LogManager.shared.addLog("Loaded photo album named: \(name)")
             self.assetCollection = assetCollection
             await refreshPhotoAssets()
             return
         }
         
         guard createAlbumIfNotFound else {
-            logger.error("Unable to find photo album named: \(name)")
+            LogManager.shared.addLog("Unable to find photo album named: \(name)")
             throw PhotoCollectionError.unableToFindAlbum(name)
         }
 
-        logger.log("Creating photo album named: \(name)")
+        LogManager.shared.addLog("Creating photo album named: \(name)")
         
         if let assetCollection = try? await PhotoCollection.createAlbum(named: name) {
             self.assetCollection = assetCollection
@@ -126,7 +126,7 @@ class PhotoCollection: NSObject, ObservableObject {
             await refreshPhotoAssets()
             
         } catch let error {
-            logger.error("Error adding image to photo library: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error adding image to photo library: \(error.localizedDescription)", type: .error)
             throw PhotoCollectionError.addImageError(error)
         }
     }
@@ -146,7 +146,7 @@ class PhotoCollection: NSObject, ObservableObject {
             await refreshPhotoAssets()
             
         } catch let error {
-            logger.error("Error removing all photos from the album: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error removing all photos from the album: \(error.localizedDescription)", type: .error)
             throw PhotoCollectionError.removeAllError(error)
         }
     }
@@ -167,7 +167,7 @@ class PhotoCollection: NSObject, ObservableObject {
             await refreshPhotoAssets()
             
         } catch let error {
-            logger.error("Error removing all photos from the album: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error removing all photos from the album: \(error.localizedDescription)", type: .error)
             throw PhotoCollectionError.removeAllError(error)
         }
     }
@@ -187,7 +187,7 @@ class PhotoCollection: NSObject, ObservableObject {
         if let newFetchResult = newFetchResult {
             await MainActor.run {
                 photoAssets = PhotoAssetCollection(newFetchResult)
-                logger.debug("PhotoCollection photoAssets refreshed: \(self.photoAssets.count)")
+                LogManager.shared.addLog("PhotoCollection photoAssets refreshed: \(self.photoAssets.count)")
             }
         }
     }
@@ -219,10 +219,10 @@ class PhotoCollection: NSObject, ObservableObject {
                 collectionPlaceholder = createAlbumRequest.placeholderForCreatedAssetCollection
             }
         } catch let error {
-            logger.error("Error creating album in photo library: \(error.localizedDescription)")
+            LogManager.shared.addLog("Error creating album in photo library: \(error.localizedDescription)", type: .error)
             throw PhotoCollectionError.createAlbumError(error)
         }
-        logger.log("Created photo album named: \(name)")
+        LogManager.shared.addLog("Created photo album named: \(name)")
         guard let collectionIdentifier = collectionPlaceholder?.localIdentifier else {
             throw PhotoCollectionError.missingLocalIdentifier
         }

@@ -70,8 +70,10 @@ final class DataModel: ObservableObject {
             do {
                 try await photoCollection.addImage(imageData)
                 logger.debug("Added image data to photo collection.")
+                LogManager.shared.addLog("Added image data to photo collection.")
             } catch let error {
                 logger.error("Failed to add image to photo collection: \(error.localizedDescription)")
+                LogManager.shared.addLog("Failed to add image to photo collection: \(error.localizedDescription)", type: .error)
             }
         }
     }
@@ -81,7 +83,7 @@ final class DataModel: ObservableObject {
         
         let authorized = await PhotoLibrary.checkAuthorization()
         guard authorized else {
-            logger.error("Photo library access was not authorized.")
+            LogManager.shared.addLog("Photo library access was not authorized.")
             return
         }
         
@@ -90,7 +92,7 @@ final class DataModel: ObservableObject {
                 try await self.photoCollection.load()
                 await self.loadThumbnail()
             } catch let error {
-                logger.error("Failed to load photo collection: \(error.localizedDescription)")
+                LogManager.shared.addLog("Failed to load photo collection: \(error.localizedDescription)", type: .error)
             }
             self.isPhotosLoaded = true
         }
