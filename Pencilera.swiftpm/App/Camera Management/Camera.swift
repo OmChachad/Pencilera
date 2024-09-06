@@ -315,7 +315,8 @@ class Camera: NSObject {
     func takePhoto() {
         guard let photoOutput = self.photoOutput else { 
             LogManager.shared.addLog("Could not get photoOutput", type: .error)
-            return }
+            return 
+        }
         
         sessionQueue.async {
             
@@ -339,7 +340,9 @@ class Camera: NSObject {
                     photoOutputVideoConnection.videoOrientation = videoOrientation
                 }
             }
+            
             LogManager.shared.addLog("Captured a photo")
+            
             photoOutput.capturePhoto(with: photoSettings, delegate: self)
         }
     }
@@ -354,6 +357,8 @@ extension Camera: AVCapturePhotoCaptureDelegate {
             return
         }
         
+        LogManager.shared.addLog(photo.description)
+        
         addToPhotoStream?(photo)
     }
 }
@@ -361,7 +366,10 @@ extension Camera: AVCapturePhotoCaptureDelegate {
 extension Camera: AVCaptureVideoDataOutputSampleBufferDelegate {
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = sampleBuffer.imageBuffer else { return }
+        guard let pixelBuffer = sampleBuffer.imageBuffer else {
+            LogManager.shared.addLog("Could not get pixelBuffer", type: .error)
+            return
+        }
         
         if connection.isVideoOrientationSupported,
            let videoOrientation = videoOrientationFor(deviceOrientation) {
