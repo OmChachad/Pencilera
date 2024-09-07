@@ -106,6 +106,7 @@ class PhotoCollection: NSObject, ObservableObject {
     
     func addImage(_ imageData: Data) async throws {
         guard let assetCollection = self.assetCollection else {
+            LogManager.shared.addLog("Could not find asset collection.", type: .error)
             throw PhotoCollectionError.missingAssetCollection
         }
         
