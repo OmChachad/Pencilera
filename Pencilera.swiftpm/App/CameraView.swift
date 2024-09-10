@@ -6,7 +6,7 @@ import SwiftUI
 import Combine
 
 struct CameraView: View {
-    @StateObject private var model = DataModel()
+    @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
     
     @State private var capturedPhoto = false
@@ -49,7 +49,7 @@ struct CameraView: View {
             GeometryReader { geo in
                 let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-                    ViewfinderView(image:  $model.viewfinderImage )
+                    ViewfinderView(flash: .constant(true), screenHeight: .constant(geo.size.height), screenWidth: .constant(geo.size.width))
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
@@ -62,7 +62,6 @@ struct CameraView: View {
                         .ignoresSafeArea()
                 }
                 .task {
-                    await model.camera.start()
                     await model.loadPhotos()
                     await model.loadThumbnail()
                 }
@@ -101,15 +100,20 @@ struct CameraView: View {
     
     private func setupDebouncedCapture() {
         capturePhotoSubject
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
             .sink {
                 self.performCapture()
             }
             .store(in: &cancellables)
     }
     
+    func switchCamera() {
+        NotificationCenter.default.post(name: NSNotification.Name("SwitchCamera"), object: nil)
+    }
+    
     private func performCapture() {
-        model.camera.takePhoto()
+//        model.camera.takePhoto()
+        NotificationCenter.default.post(name: NSNotification.Name("TakePictureNotification"), object: nil)
         
         capturedPhoto = true
         
@@ -159,12 +163,12 @@ struct CameraView: View {
                     
                     NavigationLink {
                         PhotoCollectionView(photoCollection: model.photoCollection)
-                            .onAppear {
-                                model.camera.isPreviewPaused = true
-                            }
-                            .onDisappear {
-                                model.camera.isPreviewPaused = false
-                            }
+//                            .onAppear {
+//                                model.camera.isPreviewPaused = true
+//                            }
+//                            .onDisappear {
+//                                model.camera.isPreviewPaused = false
+//                            }
                     } label: {
                         Label {
                             Text("Gallery")
@@ -191,9 +195,7 @@ struct CameraView: View {
                     }
                     
                     Button {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            model.camera.switchCaptureDevice()
-                        }
+                        switchCamera()
                     } label: {
                         Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
                             .font(.system(size: 30, weight: .regular))
