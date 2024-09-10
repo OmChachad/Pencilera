@@ -2,8 +2,8 @@ import SwiftUI
 
 struct ViewfinderView: UIViewControllerRepresentable {
     @Binding var flash: Bool
-    @Binding var screenHeight: CGFloat
-    @Binding var screenWidth: CGFloat
+    var screenHeight: CGFloat
+    var screenWidth: CGFloat
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()

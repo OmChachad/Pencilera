@@ -49,7 +49,7 @@ struct CameraView: View {
             GeometryReader { geo in
                 let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-                    ViewfinderView(flash: .constant(true), screenHeight: .constant(geo.size.height), screenWidth: .constant(geo.size.width))
+                    ViewfinderView(flash: .constant(true), screenHeight: geo.size.height, screenWidth: geo.size.width)
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
