@@ -19,6 +19,7 @@ class LogManager: ObservableObject {
     func addLog(_ title: String, type: Log.LogType = .print) {
         DispatchQueue.main.async {
             let log = Log(title: title, type: type)
+            print(log.title)
             self.logs.append(log)
         }
     }
