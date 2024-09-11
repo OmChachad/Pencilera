@@ -9,7 +9,6 @@ struct CameraView: View {
     @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
     
-    @State private var capturedPhoto = false
     @State private var isPortrait = false
     
     @State private var capturePhotoSubject = PassthroughSubject<Void, Never>()
@@ -89,13 +88,6 @@ struct CameraView: View {
                 }
             }
         }
-        .overlay {
-            if capturedPhoto {
-                Color.white
-                    .ignoresSafeArea()
-            }
-        }
-        .animation(.spring.speed(2), value: capturedPhoto)
     }
     
     private func setupDebouncedCapture() {
@@ -112,14 +104,7 @@ struct CameraView: View {
     }
     
     private func performCapture() {
-//        model.camera.takePhoto()
         NotificationCenter.default.post(name: NSNotification.Name("TakePictureNotification"), object: nil)
-        
-        capturedPhoto = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            capturedPhoto = false
-        }
     }
     
     private func buttonsView() -> some View {
