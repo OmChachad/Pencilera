@@ -92,7 +92,7 @@ struct CameraView: View {
     
     private func setupDebouncedCapture() {
         capturePhotoSubject
-            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .sink {
                 self.performCapture()
             }
