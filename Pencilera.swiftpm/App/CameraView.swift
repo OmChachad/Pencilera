@@ -23,28 +23,6 @@ struct CameraView: View {
     
     @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
     
-    @AppStorage("Modeldentifier") var modelIdentifier = ""
-    
-    var isPencilProSupported: Bool {
-        let applePencilProiPadIdentifiers: [String] = ["iPad14,8",
-                                                       "iPad14,9",
-                                                       "iPad14,10",
-                                                       "iPad14,11",
-                                                       "iPad16,3",
-                                                       "iPad16,4",
-                                                       "iPad16,5",
-                                                       "iPad16,6",
-                                                       "iPad16,3-A",
-                                                       "iPad16,3-B",
-                                                       "iPad16,4-A",
-                                                       "iPad16,4-B",
-                                                       "iPad16,5-A",
-                                                       "iPad16,5-B",
-                                                       "iPad16,6-A",
-                                                       "iPad16,6-B"]
-        return applePencilProiPadIdentifiers.contains(modelIdentifier)
-    }
-    
     var body: some View {
         NavigationStack {
             GeometryReader { geo in

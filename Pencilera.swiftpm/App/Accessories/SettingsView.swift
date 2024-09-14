@@ -25,14 +25,16 @@ struct Settings: View {
     
     var body: some View {
         Form {
-            Section {
-                pencilActionPicker("Double Tap Action", selection: $doubleTapAction)
-                pencilActionPicker("Squeeze Action", selection: $squeezeAction)
-            } footer: {
-                if doubleTapAction == squeezeAction && squeezeAction != .capture {
-                    Text("\(Image(systemName: "exclamationmark.triangle")) Your settings prevent you from using your Apple Pencil are a remote to capture photos.")
-                        .font(.footnote)
-                        .foregroundStyle(.yellow)
+            if CompatibilityChecker().isPencilProSupported {
+                Section {
+                    pencilActionPicker("Double Tap Action", selection: $doubleTapAction)
+                    pencilActionPicker("Squeeze Action", selection: $squeezeAction)
+                } footer: {
+                    if doubleTapAction == squeezeAction && squeezeAction != .capture {
+                        Text("\(Image(systemName: "exclamationmark.triangle")) Your settings prevent you from using your Apple Pencil are a remote to capture photos.")
+                            .font(.footnote)
+                            .foregroundStyle(.yellow)
+                    }
                 }
             }
             
