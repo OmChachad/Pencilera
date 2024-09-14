@@ -12,6 +12,7 @@ struct FlashModePicker: View {
                 .accessibilityLabel("Flash \(mode.title)")
             }
         }
+        .foregroundStyle(selection.color)
         .labelStyle(.iconOnly)
         .contentTransition(.symbolEffect(.replace))
     }

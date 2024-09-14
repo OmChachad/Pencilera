@@ -27,6 +27,15 @@ enum CameraFlashMode: Int, Codable, CaseIterable {
         }
     }
     
+    var color: Color {
+        switch self {
+        case .on:
+            return .yellow
+        default:
+            return .white
+        }
+    }
+    
     init(systemMode: UIImagePickerController.CameraFlashMode) {
         self = CameraFlashMode(rawValue: systemMode.rawValue) ?? CameraFlashMode.off
     }
@@ -34,4 +43,4 @@ enum CameraFlashMode: Int, Codable, CaseIterable {
     func toSystemMode() -> UIImagePickerController.CameraFlashMode {
         return UIImagePickerController.CameraFlashMode(rawValue: self.rawValue) ?? .off
     }
-    }
+}
