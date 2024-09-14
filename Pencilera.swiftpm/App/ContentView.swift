@@ -23,6 +23,13 @@ struct ContentView: View {
     
     @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
     
+    @AppStorage("HasGrantedPhotoAccess") private var hasGrantedPhotoAccess = false
+    @AppStorage("HasGrantedCameraAccess") private var hasGrantedCameraAccess = false
+    
+    init() {
+        CameraAccessManager.shared.checkCameraAccess()
+    }
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -32,6 +39,9 @@ struct ContentView: View {
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
+                        .overlay {
+                            unavailabilityOverlay()
+                        }
                     
                     buttonsView()
                 }
@@ -191,5 +201,38 @@ struct ContentView: View {
         .padding()
         .padding(!isPortrait ? .trailing : .bottom)
         .padding(!isPortrait ? .vertical : .horizontal)
+    }
+    
+    private func unavailabilityOverlay() -> some View {
+        Group {
+            if !hasGrantedPhotoAccess || !hasGrantedCameraAccess {
+                Rectangle()
+                    .fill(.regularMaterial)
+                    .cornerRadius(14)
+                    .shadow(radius: 5)
+                    .padding()
+                    .overlay {
+                        VStack {
+                            Spacer()
+                            
+                            if !hasGrantedCameraAccess {
+                                ContentUnavailableView("Camera Access Not Granted", systemImage: "camera.fill", description: Text("Pencilera can't capture your stunning smile without access to your camera.\nPlease open Settings and grant Camera Access for Pencilera to be able to capture photos."))
+                            } else if !hasGrantedPhotoAccess {
+                                ContentUnavailableView("Photo Library Access Not Granted", systemImage: "exclamationmark.triangle.fill", description: Text("Please open Settings and enable Full Photo Library Access for Pencilera to be able to save photos to your library, and to be able to browse through them from Pencilera."))
+                            }
+                            
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                }
+                            }
+                            .buttonStyle(BorderedProminentButtonStyle())
+                            
+                            Spacer()
+                        }
+                        .frame(height: 300)
+                    }
+            }
+        }
     }
 }

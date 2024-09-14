@@ -8,25 +8,31 @@ import os.log
 class PhotoLibrary {
 
     static func checkAuthorization() async -> Bool {
-        switch PHPhotoLibrary.authorizationStatus(for: .readWrite) {
+        let authorizationStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        var hasAccess: Bool
+        
+        switch authorizationStatus {
         case .authorized:
             LogManager.shared.addLog("Photo library access authorized.")
-            return true
+            hasAccess = true
         case .notDetermined:
             LogManager.shared.addLog("Photo library access not determined.")
-            return await PHPhotoLibrary.requestAuthorization(for: .readWrite) == .authorized
+            hasAccess = await PHPhotoLibrary.requestAuthorization(for: .readWrite) == .authorized
         case .denied:
             LogManager.shared.addLog("Photo library access denied.")
-            return false
+            hasAccess = false
         case .limited:
             LogManager.shared.addLog("Photo library access limited.")
-            return false
+            hasAccess = false
         case .restricted:
             LogManager.shared.addLog("Photo library access restricted.")
-            return false
+            hasAccess = false
         @unknown default:
-            return false
+            hasAccess = false
         }
+        
+        UserDefaults.standard.setValue(hasAccess, forKey: "HasGrantedPhotoAccess")
+        return hasAccess
     }
 }
 
