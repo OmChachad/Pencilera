@@ -18,8 +18,8 @@ struct CameraView: View {
     @State private var showInfo = false
     @State private var showSettings = false
     
-    @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
-    @AppStorage("squeezeEnabled") private var isSqueezeEnabled = true
+    @AppStorage("DoubleTapAction") private var doubleTapAction: Settings.PencilAction = .capture
+    @AppStorage("SqueezeAction") private var squeezeAction: Settings.PencilAction = .capture
     
     @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
     
@@ -72,14 +72,10 @@ struct CameraView: View {
                 .ignoresSafeArea()
                 .statusBar(hidden: true)
                 .onPencilDoubleTap { _ in
-                    if isDoubleTapEnabled {
-                        capturePhotoSubject.send()
-                    }
+                    performAction(action: doubleTapAction)
                 }
                 .onPencilSqueeze { _ in
-                    if isSqueezeEnabled {
-                        capturePhotoSubject.send()
-                    }
+                    performAction(action: squeezeAction)
                 }
                 .onChange(of: geo.size.width <= geo.size.height) {
                     isPortrait = geo.size.width <= geo.size.height
@@ -89,6 +85,17 @@ struct CameraView: View {
                     setupDebouncedCapture()
                 }
             }
+        }
+    }
+    
+    func performAction(action: Settings.PencilAction) {
+        switch action {
+        case .nothing:
+            break
+        case .capture:
+            capturePhotoSubject.send()
+        case .switchCamera:
+            switchCamera()
         }
     }
     
