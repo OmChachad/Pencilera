@@ -5,7 +5,7 @@ extension Pencilera: WhatsNewCollectionProvider {
     
     var whatsNewCollection: WhatsNewCollection {
         WhatsNew(
-            version: "1.0.1",
+            version: "2.0.0",
             title: "What's New in Version 2.0",
             features: [
                 WhatsNew.Feature(
