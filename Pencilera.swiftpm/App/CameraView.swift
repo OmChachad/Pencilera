@@ -21,6 +21,8 @@ struct CameraView: View {
     @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
     @AppStorage("squeezeEnabled") private var isSqueezeEnabled = true
     
+    @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
+    
     @AppStorage("Modeldentifier") var modelIdentifier = ""
     
     var isPencilProSupported: Bool {
@@ -48,7 +50,7 @@ struct CameraView: View {
             GeometryReader { geo in
                 let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-                    ViewfinderView(flash: .constant(true), screenHeight: geo.size.height, screenWidth: geo.size.width)
+                    ViewfinderView(flashMode: self.flashMode, screenHeight: geo.size.height, screenWidth: geo.size.width)
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
@@ -179,16 +181,25 @@ struct CameraView: View {
                         }
                     }
                     
-                    Button {
-                        switchCamera()
-                    } label: {
-                        Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 30, weight: .regular))
-                            .foregroundColor(.white)
+                    HStack {
+                        Button {
+                            switchCamera()
+                        } label: {
+                            Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+                                .foregroundColor(.white)
+                        }
+                        .padding(5)
+                                                    .frame(width: 35, height: 35)
+                        .background(.ultraThinMaterial)
+                        .clipShape(.circle)
+                        
+                        FlashModePicker(selection: $flashMode)
+                            .padding(5)
+                            .frame(width: 35, height: 35)
+                            .background(.ultraThinMaterial)
+                            .clipShape(.circle)
                     }
-                    .padding(5)
-                    .background(.ultraThinMaterial)
-                    .clipShape(.circle)
+                    .font(.system(size: 25, weight: .regular))
                     
                     Spacer()
                 }

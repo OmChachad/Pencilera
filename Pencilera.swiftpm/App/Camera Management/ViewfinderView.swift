@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ViewfinderView: UIViewControllerRepresentable {
-    @Binding var flash: Bool
+    var flashMode: CameraFlashMode
     var screenHeight: CGFloat
     var screenWidth: CGFloat
     
@@ -33,11 +33,7 @@ struct ViewfinderView: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        if flash == true {
-            uiViewController.cameraFlashMode = .on
-        } else {
-            uiViewController.cameraFlashMode = .off
-        }
+        uiViewController.cameraFlashMode = flashMode.toSystemMode()
     }
     
     func makeCoordinator() -> Coordinator {
