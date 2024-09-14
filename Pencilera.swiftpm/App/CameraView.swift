@@ -110,10 +110,12 @@ struct CameraView: View {
     }
     
     private func buttonsView() -> some View {
-        let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        let sidebarStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        
+        let secondaryButtonStack = !isPortrait ? AnyLayout(HStackLayout()) : AnyLayout(VStackLayout(spacing: 15))
         
         return ZStack {
-            buttonsStack {
+            sidebarStack {
                 
                // if isPencilProSupported {
                     Button("Settings", systemImage: "gear") {
@@ -128,7 +130,7 @@ struct CameraView: View {
                 
                 Spacer()
                 
-                HStack {
+                secondaryButtonStack {
                     Button("Tip Jar", systemImage: "heart.fill") {
                         showTipJar.toggle()
                     }
@@ -144,7 +146,7 @@ struct CameraView: View {
             }
             .font(.system(size: 20, weight: .regular))
             
-            buttonsStack {
+            sidebarStack {
                 Group {
                     Spacer()
                     
@@ -181,7 +183,7 @@ struct CameraView: View {
                         }
                     }
                     
-                    HStack {
+                    secondaryButtonStack {
                         Button {
                             switchCamera()
                         } label: {
