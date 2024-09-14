@@ -5,7 +5,7 @@
 import SwiftUI
 import Combine
 
-struct CameraView: View {
+struct ContentView: View {
     @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
     

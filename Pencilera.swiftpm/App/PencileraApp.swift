@@ -15,7 +15,7 @@ struct Pencilera: App {
                 if isFirstTime {
                     OnboardingBackground()
                 } else {
-                    CameraView()
+                    ContentView()
                         .environmentObject(storeKit)
                 }
             }
