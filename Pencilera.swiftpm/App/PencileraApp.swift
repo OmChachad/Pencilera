@@ -3,6 +3,7 @@
  */
 
 import SwiftUI
+import WhatsNewKit
 
 @main
 struct Pencilera: App {
@@ -17,6 +18,14 @@ struct Pencilera: App {
                 } else {
                     ContentView()
                         .environmentObject(storeKit)
+                        .whatsNewSheet()
+                        .environment(
+                            \.whatsNew,
+                             WhatsNewEnvironment(
+                                versionStore: UserDefaultsWhatsNewVersionStore(),
+                                whatsNewCollection: self
+                             )
+                             )
                 }
             }
             .ignoresSafeArea(.all)
