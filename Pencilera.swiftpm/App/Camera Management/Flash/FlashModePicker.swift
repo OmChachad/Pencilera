@@ -13,7 +13,7 @@ struct FlashModePicker: View {
             }
         }
         .labelStyle(.iconOnly)
-        .font(.title2)
+     //   .font(.title2)
         .contentTransition(.symbolEffect(.replace))
     }
 }

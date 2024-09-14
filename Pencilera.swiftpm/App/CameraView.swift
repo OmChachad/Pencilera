@@ -189,19 +189,13 @@ struct CameraView: View {
                         } label: {
                             Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
                                 .foregroundColor(.white)
+                                .font(.system(size: 25, weight: .regular))
                         }
-                        .padding(5)
-                                                    .frame(width: 35, height: 35)
-                        .background(.ultraThinMaterial)
-                        .clipShape(.circle)
                         
                         FlashModePicker(selection: $flashMode)
-                            .padding(5)
-                            .frame(width: 35, height: 35)
-                            .background(.ultraThinMaterial)
-                            .clipShape(.circle)
+                            .font(.system(size: 20, weight: .regular))
                     }
-                    .font(.system(size: 25, weight: .regular))
+                    .buttonStyle(CircularButtonStyle())
                     
                     Spacer()
                 }
