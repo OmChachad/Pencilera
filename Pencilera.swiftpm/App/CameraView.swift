@@ -102,7 +102,7 @@ struct CameraView: View {
         return ZStack {
             sidebarStack {
                 
-               // if isPencilProSupported {
+                if CompatibilityChecker().isPencilProSupported {
                     Button("Settings", systemImage: "gear") {
                         showSettings.toggle()
                     }
@@ -111,7 +111,7 @@ struct CameraView: View {
                             .frame(width: 400, height: 300)
                     }
                     .hoverEffect(.lift)
-            //    }
+                }
                 
                 Spacer()
                 
@@ -137,12 +137,6 @@ struct CameraView: View {
                     
                     NavigationLink {
                         PhotoCollectionView(photoCollection: model.photoCollection)
-//                            .onAppear {
-//                                model.camera.isPreviewPaused = true
-//                            }
-//                            .onDisappear {
-//                                model.camera.isPreviewPaused = false
-//                            }
                     } label: {
                         Label {
                             Text("Gallery")

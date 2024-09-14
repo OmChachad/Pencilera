@@ -4,8 +4,6 @@ struct Settings: View {
     @AppStorage("DoubleTapAction") private var doubleTapAction: PencilAction = .capture
     @AppStorage("SqueezeAction") private var squeezeAction: PencilAction = .capture
     
-    @State private var showLogsView = false
-    
     enum PencilAction: Int, CaseIterable, Codable {
         case nothing = 0
         case capture = 1
@@ -35,15 +33,6 @@ struct Settings: View {
                             .font(.footnote)
                             .foregroundStyle(.yellow)
                     }
-                }
-            }
-            
-            Section("Advanced") {
-                Button("View Logs") {
-                    showLogsView = true
-                }
-                .sheet(isPresented: $showLogsView) {
-                    LogsView()
                 }
             }
         }

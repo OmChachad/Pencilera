@@ -3,6 +3,8 @@ import SwiftUI
 struct InfoView: View {
     @Environment(\.openURL) var openURL
     
+    @State private var showLogsView = false
+    
     struct MyApp: Hashable {
         var name: String
         var iconName: String
@@ -86,6 +88,15 @@ struct InfoView: View {
                     }
                 }
                 .padding()
+            }
+            
+            Section("Advanced") {
+                Button("View Logs") {
+                    showLogsView = true
+                }
+                .sheet(isPresented: $showLogsView) {
+                    LogsView()
+                }
             }
         }
     }
