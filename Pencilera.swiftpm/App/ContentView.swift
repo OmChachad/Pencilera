@@ -5,11 +5,10 @@
 import SwiftUI
 import Combine
 
-struct CameraView: View {
-    @StateObject private var model = DataModel()
+struct ContentView: View {
+    @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
     
-    @State private var capturedPhoto = false
     @State private var isPortrait = false
     
     @State private var capturePhotoSubject = PassthroughSubject<Void, Never>()
@@ -19,29 +18,16 @@ struct CameraView: View {
     @State private var showInfo = false
     @State private var showSettings = false
     
-    @AppStorage("doubleTapEnabled") private var isDoubleTapEnabled = true
-    @AppStorage("squeezeEnabled") private var isSqueezeEnabled = true
+    @AppStorage("DoubleTapAction") private var doubleTapAction: Settings.PencilAction = .capture
+    @AppStorage("SqueezeAction") private var squeezeAction: Settings.PencilAction = .capture
     
-    @AppStorage("Modeldentifier") var modelIdentifier = ""
+    @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
     
-    var isPencilProSupported: Bool {
-        let applePencilProiPadIdentifiers: [String] = ["iPad14,8",
-                                                       "iPad14,9",
-                                                       "iPad14,10",
-                                                       "iPad14,11",
-                                                       "iPad16,3",
-                                                       "iPad16,4",
-                                                       "iPad16,5",
-                                                       "iPad16,6",
-                                                       "iPad16,3-A",
-                                                       "iPad16,3-B",
-                                                       "iPad16,4-A",
-                                                       "iPad16,4-B",
-                                                       "iPad16,5-A",
-                                                       "iPad16,5-B",
-                                                       "iPad16,6-A",
-                                                       "iPad16,6-B"]
-        return applePencilProiPadIdentifiers.contains(modelIdentifier)
+    @AppStorage("HasGrantedPhotoAccess") private var hasGrantedPhotoAccess = false
+    @AppStorage("HasGrantedCameraAccess") private var hasGrantedCameraAccess = false
+    
+    init() {
+        CameraAccessManager.shared.checkCameraAccess()
     }
     
     var body: some View {
@@ -49,20 +35,21 @@ struct CameraView: View {
             GeometryReader { geo in
                 let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-                    ViewfinderView(image:  $model.viewfinderImage )
+                    ViewfinderView(flashMode: self.flashMode, screenHeight: geo.size.height, screenWidth: geo.size.width)
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
+                        .overlay {
+                            unavailabilityOverlay()
+                        }
                     
                     buttonsView()
                 }
                 .background {
                     Color(.secondarySystemBackground)
-                        .preferredColorScheme(.dark)
                         .ignoresSafeArea()
                 }
                 .task {
-                    await model.camera.start()
                     await model.loadPhotos()
                     await model.loadThumbnail()
                 }
@@ -72,14 +59,10 @@ struct CameraView: View {
                 .ignoresSafeArea()
                 .statusBar(hidden: true)
                 .onPencilDoubleTap { _ in
-                    if isDoubleTapEnabled {
-                        capturePhotoSubject.send()
-                    }
+                    performAction(action: doubleTapAction)
                 }
                 .onPencilSqueeze { _ in
-                    if isSqueezeEnabled {
-                        capturePhotoSubject.send()
-                    }
+                    performAction(action: squeezeAction)
                 }
                 .onChange(of: geo.size.width <= geo.size.height) {
                     isPortrait = geo.size.width <= geo.size.height
@@ -90,13 +73,17 @@ struct CameraView: View {
                 }
             }
         }
-        .overlay {
-            if capturedPhoto {
-                Color.white
-                    .ignoresSafeArea()
-            }
+    }
+    
+    func performAction(action: Settings.PencilAction) {
+        switch action {
+        case .nothing:
+            break
+        case .capture:
+            capturePhotoSubject.send()
+        case .switchCamera:
+            switchCamera()
         }
-        .animation(.spring.speed(2), value: capturedPhoto)
     }
     
     private func setupDebouncedCapture() {
@@ -108,23 +95,23 @@ struct CameraView: View {
             .store(in: &cancellables)
     }
     
+    func switchCamera() {
+        NotificationCenter.default.post(name: NSNotification.Name("SwitchCamera"), object: nil)
+    }
+    
     private func performCapture() {
-        model.camera.takePhoto()
-        
-        capturedPhoto = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            capturedPhoto = false
-        }
+        NotificationCenter.default.post(name: NSNotification.Name("TakePictureNotification"), object: nil)
     }
     
     private func buttonsView() -> some View {
-        let buttonsStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        let sidebarStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
+        
+        let secondaryButtonStack = !isPortrait ? AnyLayout(HStackLayout()) : AnyLayout(VStackLayout(spacing: 15))
         
         return ZStack {
-            buttonsStack {
+            sidebarStack {
                 
-               // if isPencilProSupported {
+                if CompatibilityChecker().isPencilProSupported {
                     Button("Settings", systemImage: "gear") {
                         showSettings.toggle()
                     }
@@ -133,11 +120,11 @@ struct CameraView: View {
                             .frame(width: 400, height: 300)
                     }
                     .hoverEffect(.lift)
-            //    }
+                }
                 
                 Spacer()
                 
-                HStack {
+                secondaryButtonStack {
                     Button("Tip Jar", systemImage: "heart.fill") {
                         showTipJar.toggle()
                     }
@@ -153,18 +140,12 @@ struct CameraView: View {
             }
             .font(.system(size: 20, weight: .regular))
             
-            buttonsStack {
+            sidebarStack {
                 Group {
                     Spacer()
                     
                     NavigationLink {
                         PhotoCollectionView(photoCollection: model.photoCollection)
-                            .onAppear {
-                                model.camera.isPreviewPaused = true
-                            }
-                            .onDisappear {
-                                model.camera.isPreviewPaused = false
-                            }
                     } label: {
                         Label {
                             Text("Gallery")
@@ -190,18 +171,19 @@ struct CameraView: View {
                         }
                     }
                     
-                    Button {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            model.camera.switchCaptureDevice()
+                    secondaryButtonStack {
+                        Button {
+                            switchCamera()
+                        } label: {
+                            Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+                                .foregroundColor(.white)
+                                .font(.system(size: 25, weight: .regular))
                         }
-                    } label: {
-                        Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 30, weight: .regular))
-                            .foregroundColor(.white)
+                        
+                        FlashModePicker(selection: $flashMode)
+                            .font(.system(size: 20, weight: .regular))
                     }
-                    .padding(5)
-                    .background(.ultraThinMaterial)
-                    .clipShape(.circle)
+                    .buttonStyle(CircularButtonStyle())
                     
                     Spacer()
                 }
@@ -219,5 +201,38 @@ struct CameraView: View {
         .padding()
         .padding(!isPortrait ? .trailing : .bottom)
         .padding(!isPortrait ? .vertical : .horizontal)
+    }
+    
+    private func unavailabilityOverlay() -> some View {
+        Group {
+            if !hasGrantedPhotoAccess || !hasGrantedCameraAccess {
+                Rectangle()
+                    .fill(.regularMaterial)
+                    .cornerRadius(14)
+                    .shadow(radius: 5)
+                    .padding()
+                    .overlay {
+                        VStack {
+                            Spacer()
+                            
+                            if !hasGrantedCameraAccess {
+                                ContentUnavailableView("Camera Access Not Granted", systemImage: "camera.fill", description: Text("Pencilera can't capture your stunning smile without access to your camera.\nPlease open Settings and grant Camera Access for Pencilera to be able to capture photos."))
+                            } else if !hasGrantedPhotoAccess {
+                                ContentUnavailableView("Photo Library Access Not Granted", systemImage: "exclamationmark.triangle.fill", description: Text("Please open Settings and enable Full Photo Library Access for Pencilera to be able to save photos to your library, and to be able to browse through them from Pencilera."))
+                            }
+                            
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                }
+                            }
+                            .buttonStyle(BorderedProminentButtonStyle())
+                            
+                            Spacer()
+                        }
+                        .frame(height: 300)
+                    }
+            }
+        }
     }
 }

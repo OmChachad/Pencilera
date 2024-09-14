@@ -3,6 +3,7 @@
  */
 
 import SwiftUI
+import WhatsNewKit
 
 @main
 struct Pencilera: App {
@@ -15,8 +16,16 @@ struct Pencilera: App {
                 if isFirstTime {
                     OnboardingBackground()
                 } else {
-                    CameraView()
+                    ContentView()
                         .environmentObject(storeKit)
+                        .whatsNewSheet()
+                        .environment(
+                            \.whatsNew,
+                             WhatsNewEnvironment(
+                                versionStore: UserDefaultsWhatsNewVersionStore(),
+                                whatsNewCollection: self
+                             )
+                             )
                 }
             }
             .ignoresSafeArea(.all)
@@ -25,6 +34,7 @@ struct Pencilera: App {
                     .presentationBackground(Material.regular)
             })
             .animation(.default, value: isFirstTime)
+            .preferredColorScheme(.dark)
         }
     }
 }

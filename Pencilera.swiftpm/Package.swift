@@ -18,8 +18,8 @@ let package = Package(
             targets: ["App"],
             bundleIdentifier: "org.starlightapps.pencilera",
             teamIdentifier: "3S6NT5MUQZ",
-            displayVersion: "1.0.1",
-            bundleVersion: "9",
+            displayVersion: "2.0",
+            bundleVersion: "13",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
@@ -37,14 +37,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/aheze/VariableBlurView", "1.0.2"..<"2.0.0"),
-        .package(url: "https://github.com/Cindori/FluidGradient.git", "1.0.0"..<"2.0.0")
+        .package(url: "https://github.com/Cindori/FluidGradient.git", "1.0.0"..<"2.0.0"),
+        .package(url: "https://github.com/SvenTiigi/WhatsNewKit", "2.2.1"..<"3.0.0")
     ],
     targets: [
         .executableTarget(
             name: "App",
             dependencies: [
                 .product(name: "VariableBlurView", package: "VariableBlurView"),
-                .product(name: "FluidGradient", package: "FluidGradient")
+                .product(name: "FluidGradient", package: "FluidGradient"),
+                .product(name: "WhatsNewKit", package: "WhatsNewKit")
             ],
             path: "App",
             resources: [

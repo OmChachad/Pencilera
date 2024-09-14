@@ -8,31 +8,13 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @AppStorage("Modeldentifier") var modelIdentifier = ""
-    
-    var isPencilProSupported: Bool {
-        let applePencilProiPadIdentifiers: [String] = ["iPad14,8",
-                                             "iPad14,9",
-                                             "iPad14,10",
-                                             "iPad14,11",
-                                             "iPad16,3",
-                                             "iPad16,4",
-                                             "iPad16,5",
-                                             "iPad16,6",
-                                             "iPad16,3-A",
-                                             "iPad16,3-B",
-                                             "iPad16,4-A",
-                                             "iPad16,4-B",
-                                             "iPad16,5-A",
-                                             "iPad16,5-B",
-                                             "iPad16,6-A",
-                                             "iPad16,6-B"]
-        return applePencilProiPadIdentifiers.contains(modelIdentifier)
-    }
-    
     @State private var pageIndex = 1
     let minimumIndex = 1
     var maximumIndex: Int { isPencilProSupported ? 3 : 2 }
+    
+    var isPencilProSupported: Bool {
+        CompatibilityChecker().isPencilProSupported
+    }
     
     var body: some View {
         TabView(selection: $pageIndex) {
@@ -50,7 +32,6 @@ struct OnboardingView: View {
                 .tag(isPencilProSupported ? 3 : 2)
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
-        .onAppear(perform: storeModelIdentifier)
         .ignoresSafeArea(.all)
         .interactiveDismissDisabled()
         .overlay(alignment: .bottom) { 
@@ -82,16 +63,5 @@ struct OnboardingView: View {
         }
         .animation(.bouncy, value: pageIndex)
         
-    }
-    
-    func storeModelIdentifier() {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let modelIdentifier = withUnsafePointer(to: &systemInfo.machine) {
-            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-                String(cString: $0)
-            }
-        }
-        self.modelIdentifier = modelIdentifier
     }
 }
