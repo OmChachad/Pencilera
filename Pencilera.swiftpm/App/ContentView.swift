@@ -37,7 +37,6 @@ struct ContentView: View {
                 }
                 .background {
                     Color(.secondarySystemBackground)
-                        .preferredColorScheme(.dark)
                         .ignoresSafeArea()
                 }
                 .task {

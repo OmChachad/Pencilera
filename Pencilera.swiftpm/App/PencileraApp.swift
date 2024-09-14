@@ -25,6 +25,7 @@ struct Pencilera: App {
                     .presentationBackground(Material.regular)
             })
             .animation(.default, value: isFirstTime)
+            .preferredColorScheme(.dark)
         }
     }
 }
