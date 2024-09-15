@@ -21,6 +21,7 @@ struct ContentView: View {
     @AppStorage("DoubleTapAction") private var doubleTapAction: Settings.PencilAction = .capture
     @AppStorage("SqueezeAction") private var squeezeAction: Settings.PencilAction = .capture
     
+    @State private var isFlashSupported = false
     @AppStorage("CameraFlash") private var flashMode: CameraFlashMode = .auto
     
     @AppStorage("HasGrantedPhotoAccess") private var hasGrantedPhotoAccess = false
@@ -35,7 +36,7 @@ struct ContentView: View {
             GeometryReader { geo in
                 let outerStack = isPortrait ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
                 outerStack {
-                    ViewfinderView(flashMode: self.flashMode, screenHeight: geo.size.height, screenWidth: geo.size.width)
+                    ViewfinderView(isFlashSupported: $isFlashSupported.animation(), flashMode: self.flashMode, screenHeight: geo.size.height, screenWidth: geo.size.width)
                         .cornerRadius(14)
                         .shadow(radius: 5)
                         .padding()
@@ -45,6 +46,7 @@ struct ContentView: View {
                     
                     buttonsView()
                 }
+                .padding(.bottom, isPortrait ? 15 : 0)
                 .background {
                     Color(.secondarySystemBackground)
                         .ignoresSafeArea()
@@ -106,7 +108,7 @@ struct ContentView: View {
     private func buttonsView() -> some View {
         let sidebarStack = !isPortrait ? AnyLayout(VStackLayout(spacing: 60)) : AnyLayout(HStackLayout(spacing: 60))
         
-        let secondaryButtonStack = !isPortrait ? AnyLayout(HStackLayout()) : AnyLayout(VStackLayout(spacing: 15))
+        let secondaryButtonStack = !isPortrait ? AnyLayout(HStackLayout()) : AnyLayout(VStackLayout(spacing: 10))
         
         return ZStack {
             sidebarStack {
@@ -179,9 +181,10 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .font(.system(size: 25, weight: .regular))
                         }
-                        
-                        FlashModePicker(selection: $flashMode)
-                            .font(.system(size: 20, weight: .regular))
+                        if isFlashSupported {
+                            FlashModePicker(selection: $flashMode)
+                                .font(.system(size: 20, weight: .regular))
+                        }
                     }
                     .buttonStyle(CircularButtonStyle())
                     
