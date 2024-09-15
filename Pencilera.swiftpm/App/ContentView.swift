@@ -4,10 +4,12 @@
 
 import SwiftUI
 import Combine
+import StoreKit
 
 struct ContentView: View {
     @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
+    @Environment(\.requestReview) var requestReview
     
     @State private var isPortrait = false
     
@@ -30,6 +32,8 @@ struct ContentView: View {
     init() {
         CameraAccessManager.shared.checkCameraAccess()
     }
+    
+    @AppStorage("CapturedPhotosCount") private var countOfPhotos: Int = 0
     
     var body: some View {
         NavigationStack {
@@ -72,6 +76,7 @@ struct ContentView: View {
                 .onAppear {
                     isPortrait = geo.size.width <= geo.size.height
                     setupDebouncedCapture()
+                    askForReview(minimumPhotoCount: 5)
                 }
             }
         }
@@ -103,6 +108,7 @@ struct ContentView: View {
     
     private func performCapture() {
         NotificationCenter.default.post(name: NSNotification.Name("TakePictureNotification"), object: nil)
+        countOfPhotos += 1
     }
     
     private func buttonsView() -> some View {
@@ -148,6 +154,7 @@ struct ContentView: View {
                     
                     NavigationLink {
                         PhotoCollectionView(photoCollection: model.photoCollection)
+                            .onDisappear(perform: askForReview())
                     } label: {
                         Label {
                             Text("Gallery")
@@ -205,6 +212,12 @@ struct ContentView: View {
         .padding(!isPortrait ? .trailing : .bottom)
         .padding(!isPortrait ? .vertical : .horizontal)
         .frame(maxWidth: isPortrait ? .infinity : 90, maxHeight: !isPortrait ? .infinity : 90)
+    }
+    
+    private func askForReview(minimumPhotoCount: Int = 1) {
+        if countOfPhotos > minimumPhotoCount {
+            requestReview()
+        }
     }
     
     private func unavailabilityOverlay() -> some View {
