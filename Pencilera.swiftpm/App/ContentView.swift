@@ -204,6 +204,7 @@ struct ContentView: View {
         .padding()
         .padding(!isPortrait ? .trailing : .bottom)
         .padding(!isPortrait ? .vertical : .horizontal)
+        .frame(maxWidth: isPortrait ? .infinity : 90, maxHeight: !isPortrait ? .infinity : 90)
     }
     
     private func unavailabilityOverlay() -> some View {
