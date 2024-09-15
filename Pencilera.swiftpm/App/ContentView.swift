@@ -154,7 +154,7 @@ struct ContentView: View {
                     
                     NavigationLink {
                         PhotoCollectionView(photoCollection: model.photoCollection)
-                            .onDisappear(perform: askForReview())
+                            .onDisappear { askForReview() }
                     } label: {
                         Label {
                             Text("Gallery")
