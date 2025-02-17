@@ -20,18 +20,19 @@ struct PhotoView: View {
                     .resizable()
                     .scaledToFit()
                     .accessibilityLabel(asset.accessibilityLabel)
+                    .cornerRadius(10)
+                    .padding()
             } else {
                 ProgressView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .ignoresSafeArea()
-        .background(Color.secondary)
+        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle(asset.phAsset?.creationDate?.formatted(date: .complete, time: .shortened) ?? "Photo")
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
             buttonsView()
-                .padding(.bottom, 20)
+                .padding(.bottom, 30)
         }
         .task {
             guard image == nil, let cache = cache else { return }
