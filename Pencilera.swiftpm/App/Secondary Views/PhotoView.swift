@@ -58,7 +58,7 @@ struct PhotoView: View {
                 ShareLink(item: image, preview: SharePreview("Pencilera Photo from " + (asset.phAsset?.creationDate ?? Date.now).formatted(date: .complete, time: .shortened), image: image))             
             }
 
-            Button("Delete", systemImage: "trash") {
+            Button("Delete", systemImage: "trash", role: .destructive) {
                 Task {
                     await asset.delete()
                     await MainActor.run {
