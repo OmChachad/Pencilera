@@ -27,7 +27,7 @@ struct PhotoView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
         .background(Color.secondary)
-        .navigationTitle("Photo")
+        .navigationTitle(asset.phAsset?.creationDate?.formatted(date: .complete, time: .shortened) ?? "Photo")
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
             buttonsView()
