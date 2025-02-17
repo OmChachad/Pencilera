@@ -14,6 +14,7 @@
 ## Features
 
 - **Camera Remote:** Use your Apple Pencil to control the camera on your iPad. Double-tap gestures on Apple Pencil 2 and squeeze gestures on Apple Pencil Pro can be used to capture photos.
+- **Remote Flip:** Use either gesture on Apple Pencil Pro to remotely switch between your front and back camera.
 - **Easy Setup:** Simply install the app, and you're ready to start using your Apple Pencil as a camera remote.
 - **Privacy Focused:** Pencilera does not collect any personal data, ensuring that your privacy is maintained at all times.
 - **Free and Open Source:** Pencilera is completely free to use, with optional tips to support development. The app is open source, allowing developers to contribute and learn from the project.
@@ -54,7 +55,7 @@ Download Pencilera from the [App Store](https://apps.apple.com/app/pencilera/id6
     - If you have an Apple Pencil 2nd Generation, double tap its stem to instantly capture a photo.
 
 2. **Squeeze:**
-    - If you have an Apple Pencil Pro, squeeze its stem to capture a photo.
+    - If you have an Apple Pencil Pro, squeeze its stem to capture a photo. (or, use Settings to reconfigure this to flipping the camera)
 
 
 ## Contributing
@@ -84,12 +85,13 @@ Pencilera leverages several open-source packages to enhance its functionality:
 
 - **[FluidGradient](https://github.com/Cindori/FluidGradient)**: A Swift package designed to create animated fluid gradients for modern UI designs. It provides an easy-to-use interface for generating smooth, colorful gradients with motion effects. | Used during onboarding to provide the background
 
+- **[WhatsNewKit](https://github.com/SvenTiigi/WhatsNewKit)**: A Swift package for displaying "What's New" updates in iOS apps. It allows developers to easily showcase recent changes or new features with customizable views and animations. It includes a built-in UI for rich feature descriptions and supports localization. | Used during onboarding to inform users about new features after app updates 
 
 ## Acknowledgments
 
 Pencilera is developed and maintained by [Starlight Apps LLP](https://starlightapps.org).
 
-Pencilera was built on top of Apple's [Capturing and Saving a Photo Sample Swift Playground.](https://developer.apple.com/tutorials/sample-apps/capturingphotos-captureandsave)
+Pencilera v1.0 was built on top of Apple's [Capturing and Saving a Photo Sample Swift Playground.](https://developer.apple.com/tutorials/sample-apps/capturingphotos-captureandsave) | Pencilera v2.0 was rebuilt, and no longer relies on the sample code for capturing photos.
 
 Thanks to Arnav Hattiholi for design direction during the process of designing the app icon. The camera lens in the icon is built on top of [this Figma Project](https://www.figma.com/community/file/1317819493946895912/iphone-15-recreation) from [Jia.](https://x.com/upintheozone)
 
