@@ -10,6 +10,7 @@ struct ContentView: View {
     @StateObject private var model = DataModel.instance
     @Environment(\.openURL) var openURL
     @Environment(\.requestReview) var requestReview
+    @Namespace var namespace
     
     @State private var isPortrait = false
     
@@ -152,7 +153,7 @@ struct ContentView: View {
                 Group {
                     Spacer()
                     
-                    NavigationLink {
+                    ZoomNavigationLink(id: "Gallery", namespace: namespace) {
                         PhotoCollectionView(photoCollection: model.photoCollection)
                             .onDisappear { askForReview() }
                     } label: {

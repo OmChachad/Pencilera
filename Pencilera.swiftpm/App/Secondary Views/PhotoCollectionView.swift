@@ -7,6 +7,7 @@ import os.log
 
 struct PhotoCollectionView: View {
     @ObservedObject var photoCollection : PhotoCollection
+    @Namespace var namespace
     
     @Environment(\.displayScale) private var displayScale
         
@@ -26,7 +27,7 @@ struct PhotoCollectionView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
                 ForEach(photoCollection.photoAssets) { asset in
-                    NavigationLink {
+                    ZoomNavigationLink(id: asset.id, namespace: namespace) {
                         PhotoView(asset: asset, cache: photoCollection.cache)
                     } label: {
                         photoItemView(asset: asset)

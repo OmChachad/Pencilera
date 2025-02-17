@@ -65,7 +65,7 @@
 		<key>schemaVersion</key>
 		<integer>4</integer>
 		<key>swiftPMVersionString</key>
-		<string>5.10.0-dev</string>
+		<string>6.0.2-dev</string>
 	</dict>
 </dict>
 </plist>
