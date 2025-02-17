@@ -19,7 +19,7 @@ let package = Package(
             bundleIdentifier: "org.starlightapps.pencilera",
             teamIdentifier: "3S6NT5MUQZ",
             displayVersion: "2.1",
-            bundleVersion: "15",
+            bundleVersion: "16",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
