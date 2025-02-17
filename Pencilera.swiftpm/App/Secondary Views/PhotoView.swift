@@ -31,7 +31,7 @@ struct PhotoView: View {
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
             buttonsView()
-                .offset(x: 0, y: -50)
+                .padding(.bottom, 20)
         }
         .task {
             guard image == nil, let cache = cache else { return }
@@ -46,19 +46,20 @@ struct PhotoView: View {
     }
     
     private func buttonsView() -> some View {
-        HStack(spacing: 60) {
-            
+        HStack(spacing: 20) {
             Button("Favorite", systemImage: asset.isFavorite ? "heart.fill" : "heart") {
                 Task {
                     await asset.setIsFavorite(!asset.isFavorite)
                 }
             }
+            .buttonStyle(PhotoActionButtonStyle(tint: .pink))
             
             if let image = asset.phAsset?.getImage() {
-                ShareLink(item: image, preview: SharePreview("Pencilera Photo from " + (asset.phAsset?.creationDate ?? Date.now).formatted(date: .complete, time: .shortened), image: image))             
+                ShareLink(item: image, preview: SharePreview("Pencilera Photo from " + (asset.phAsset?.creationDate ?? Date.now).formatted(date: .complete, time: .shortened), image: image))
+                .buttonStyle(PhotoActionButtonStyle(tint: .blue))
             }
 
-            Button("Delete", systemImage: "trash", role: .destructive) {
+            Button("Delete", systemImage: "trash.fill", role: .destructive) {
                 Task {
                     await asset.delete()
                     await MainActor.run {
@@ -66,12 +67,20 @@ struct PhotoView: View {
                     }
                 }
             }
+            .buttonStyle(PhotoActionButtonStyle(tint: .red))
         }
-        .font(.system(size: 24))        
+        .font(.system(size: 20))        
         .buttonStyle(.plain)
         .labelStyle(.iconOnly)
-        .padding(EdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30))
-        .background(.ultraThinMaterial)
-        .cornerRadius(15)
+        .padding(7.5)
+        .background {
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .shadow(radius: 10)
+                .background {
+                    Color.primary.colorInvert().opacity(0.6)
+                        .clipShape(.capsule)
+                }
+        }
     }
 }
