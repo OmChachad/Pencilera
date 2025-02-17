@@ -72,7 +72,7 @@ struct PhotoView: View {
         .buttonStyle(.plain)
         .labelStyle(.iconOnly)
         .padding(EdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30))
-        .background(Color.secondary.colorInvert())
+        .background(.ultraThinMaterial)
         .cornerRadius(15)
     }
 }
