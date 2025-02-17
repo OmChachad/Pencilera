@@ -44,14 +44,14 @@ struct ContentView: View {
                     ViewfinderView(isFlashSupported: $isFlashSupported.animation(), flashMode: self.flashMode, screenHeight: geo.size.height, screenWidth: geo.size.width)
                         .cornerRadius(14)
                         .shadow(radius: 5)
-                        .padding()
                         .overlay {
                             unavailabilityOverlay()
                         }
+                        .padding(.horizontal)
+                        .padding(.bottom, isPortrait ? 15 : 0)
                     
                     buttonsView()
                 }
-                .padding(.bottom, isPortrait ? 15 : 0)
                 .background {
                     Color(.secondarySystemBackground)
                         .ignoresSafeArea()
@@ -63,7 +63,7 @@ struct ContentView: View {
                 .navigationTitle("Camera")
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarHidden(true)
-                .ignoresSafeArea()
+//                .ignoresSafeArea(edges: .bottom)
                 .statusBar(hidden: true)
                 .onPencilDoubleTap { _ in
                     performAction(action: doubleTapAction)
@@ -212,7 +212,7 @@ struct ContentView: View {
         .padding()
         .padding(!isPortrait ? .trailing : .bottom)
         .padding(!isPortrait ? .vertical : .horizontal)
-        .frame(maxWidth: isPortrait ? .infinity : 90, maxHeight: !isPortrait ? .infinity : 90)
+        .frame(maxWidth: isPortrait ? .infinity : 90, maxHeight: !isPortrait ? .infinity : 90, alignment: .center)
     }
     
     private func askForReview(minimumPhotoCount: Int = 1) {
