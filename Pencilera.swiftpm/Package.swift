@@ -26,7 +26,10 @@ let package = Package(
                 .pad
             ],
             supportedInterfaceOrientations: [
-
+                .portrait,
+                .portraitUpsideDown,
+                .landscapeLeft,
+                .landscapeRight
             ],
             capabilities: [
                 .camera(purposeString: "Pencilera uses your camera to capture photos."),
