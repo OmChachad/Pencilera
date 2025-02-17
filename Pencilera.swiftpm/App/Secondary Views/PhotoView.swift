@@ -48,27 +48,23 @@ struct PhotoView: View {
     private func buttonsView() -> some View {
         HStack(spacing: 60) {
             
-            Button {
+            Button("Favorite", systemImage: asset.isFavorite ? "heart.fill" : "heart") {
                 Task {
                     await asset.setIsFavorite(!asset.isFavorite)
                 }
-            } label: {
-                Label("Favorite", systemImage: asset.isFavorite ? "heart.fill" : "heart")
             }
             
             if let image = asset.phAsset?.getImage() {
                 ShareLink(item: image, preview: SharePreview("Pencilera Photo from " + (asset.phAsset?.creationDate ?? Date.now).formatted(date: .complete, time: .shortened), image: image))             
             }
 
-            Button {
+            Button("Delete", systemImage: "trash") {
                 Task {
                     await asset.delete()
                     await MainActor.run {
                         dismiss()
                     }
                 }
-            } label: {
-                Label("Delete", systemImage: "trash")
             }
         }
         .font(.system(size: 24))        
