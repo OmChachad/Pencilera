@@ -54,7 +54,10 @@ struct PhotoView: View {
                 }
             } label: {
                 Label("Favorite", systemImage: asset.isFavorite ? "heart.fill" : "heart")
-                    .font(.system(size: 24))
+            }
+            
+            if let image = asset.phAsset?.getImage() {
+                ShareLink(item: image, preview: SharePreview("Pencilera Photo from " + (asset.phAsset?.creationDate ?? Date.now).formatted(date: .complete, time: .shortened), image: image))             
             }
 
             Button {
@@ -66,9 +69,9 @@ struct PhotoView: View {
                 }
             } label: {
                 Label("Delete", systemImage: "trash")
-                    .font(.system(size: 24))
             }
         }
+        .font(.system(size: 24))        
         .buttonStyle(.plain)
         .labelStyle(.iconOnly)
         .padding(EdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30))
