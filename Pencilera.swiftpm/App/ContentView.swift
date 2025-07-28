@@ -48,6 +48,7 @@ struct ContentView: View {
                             unavailabilityOverlay()
                         }
                         .padding(.horizontal)
+                        .padding(.top)
                         .padding(.bottom, isPortrait ? 15 : 0)
                     
                     buttonsView()
